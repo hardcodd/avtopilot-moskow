@@ -1,0 +1,12 @@
+{% if request.path != '/' %}{% load static %}
+    <div class="person">
+        <div class="pane">
+            <i class="fas fa-times"></i>
+            <span>Есть вопросы?</span>
+            <span>Задайте их эксперту!</span>
+            <a href="tel:{{ opts.phone|striptags }}">{{ opts.phone|safe }}</a>
+            <a href="#" data-form="#call-back" class="btn btn-orange">Заказать звонок</a>
+        </div>
+        <div class="image image-bg" style="background-image:url({% static 'img/person.png' %});"></div>
+    </div>
+{% endif %}

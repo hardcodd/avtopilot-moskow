@@ -1,0 +1,33 @@
+{% extends 'admin/base.html' %}
+{% block extrastyle %}
+    <style type="text/css">
+        iframe html body img {
+            max-width: 100% !important;
+        }
+        .suit-columns {
+            display: flex;
+        }
+        .form-horizontal .control-group .controls .selector .selector-available,
+        .form-horizontal .control-group .controls .selector .selector-chosen {
+            max-width: none;
+        }
+        .form-horizontal .control-group .controls .selector .selector-available select {
+            height: 300px !important;
+        }
+        .form-horizontal .control-group .controls .selector .selector-chosen select {
+            height: 327px !important;
+        }
+    </style>
+{% endblock %}
+{% block header_content %}
+    <div class="header-content">
+
+        <div class="header-column icon">
+            <i class="icon-globe"></i>
+        </div>
+        <div class="header-column">
+            <a href="{% url 'home' %}" class="grey" target="_blank"><b>Перейти на сайт</b></a>
+        </div>
+
+    </div>
+{% endblock %}

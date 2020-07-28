@@ -1,0 +1,42 @@
+{% extends 'base.html' %}{% load sitetree %}{% load static %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}page page-add-review{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_comment" template "breadcrumbs.html" %}
+
+        <main class="main-content content-sidebar">
+
+            {% include 'catalog/sidebar.html' %}
+
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">{{ instance.title }}</h1>
+
+                    {{ instance.content|safe }}
+
+                    <form class="add-review" action="{% url 'add_review_action' %}" method="post" enctype="multipart/form-data">
+                        {{ form.as_p }}
+                        <p class="text-center"><button class="btn btn-orange">Отправить</button></p>
+                        {% csrf_token %}
+                    </form>
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+{% endblock %}

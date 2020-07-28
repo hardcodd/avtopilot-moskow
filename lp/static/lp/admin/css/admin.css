@@ -1,0 +1,15 @@
+.field-json {
+	overflow: visible!important
+}
+
+.field-json>div::after {
+	content: '';
+	display: table;
+	clear: both
+}
+
+.ace_editor {
+	font-size: 14px;
+	line-height: 1.8em;
+	font-family: "Fira Code", Roboto, Consolas, "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif
+}

@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+	<head>
+
+		<!-- Document Charset-->
+		<meta charset="UTF-8">
+
+		<!-- Responsibility params-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<!-- Page description-->
+		<meta name="description" content="{{ instance.meta_description }}">
+		<meta name="keywords" content="{{ instance.keywords }}">
+
+		<!-- Open Graph -<start>- -->
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="{{ request.build_absolute_uri }}">
+		<meta property="og:title" content="{% if instance.og_title %}{{ instance.og_title }}{% else %}{{ instance.title }}{% endif %}">
+		<meta property="og:description" content="{% if instance.og_description %}{{ instance.og_description }}{% else %}{{ instance.meta_description }}{% endif %}">
+		<meta property="og:image" content="{% if instance.og_image %}{{ instance.og_image.url }}{% elif instance.image %}{{ instance.image.url }}{% endif %}">
+		<!-- Open Graph -</end>- -->
+
+		<!-- Favicon -<start>- -->
+		<link rel="icon" href="{% static 'img/favicon.ico' %}">
+		<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon-180x180.png' %}">
+		<!-- Favicon -</end>- -->
+
+
+		<!-- Meta Theme Color for Chrome and Opera-->
+		<meta name="theme-color" content="{{ instance.theme_color }}">
+
+		<!-- Document title-->
+		<title>{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}</title>
+
+		<!-- Styles loading-->
+		<link href="{% static 'lp/css/vendors.7631796d20a2f49b760e.css' %}" rel="stylesheet">
+		<link href="{% static 'lp/css/uikit.7631796d20a2f49b760e.css' %}" rel="stylesheet">
+		<link href="{% static 'lp/css/main.7631796d20a2f49b760e.css' %}" rel="stylesheet">
+	</head>
+
+	<body class="page-home">
+
+		<!-- Main wrapper -<start>- -->
+		<div class="page" id="page">
+
+			{{ header }}
+
+			<!-- Page content -<start>- -->
+			<div class="page__content">
+
+				<!-- Main -<start>- -->
+				<main class="main">
+					<div class="main__content">
+
+						{{ sections }}
+
+					</div>
+				</main>
+				<!-- Main -</end>- -->
+
+			</div>
+			<!-- Page content -</end>- -->
+
+			{{ footer }}
+
+		</div>
+		<!-- Main wrapper -</end>- -->
+
+		<div class="scroll-top" style="
+		background:{{ instance.background }};
+		color:{{ instance.color }};
+		bottom:{{ instance.bottom|default:0 }}px!important;
+		{% if instance.left %}
+		left:{{ instance.left }}px!important;
+		-webkit-transform: translate(-{{ instance.left|add:50 }}px,0);
+		-ms-transform: translate(-{{ instance.left|add:50 }}px,0);
+		transform: translate(-{{ instance.left|add:50 }}px,0);
+		{% elif instance.right %}
+		right:{{ instance.right }}px!important;
+		-webkit-transform: translate({{ instance.right|add:50 }}px,0);
+		-ms-transform: translate({{ instance.right|add:50 }}px,0);
+		transform: translate({{ instance.right|add:50 }}px,0);
+		{% endif %}
+		">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/></svg>
+		</div>
+
+		<script src="https://www.google.com/recaptcha/api.js?render=6Lct0LQUAAAAADQPcFJ69NopzvY_Andd-44fvvNZ"></script>
+		<script>
+		grecaptcha.ready(function() {
+				grecaptcha.execute('6Lct0LQUAAAAADQPcFJ69NopzvY_Andd-44fvvNZ', {action: 'homepage'}).then(function(token) {
+				var forms = document.querySelectorAll('form');
+						forms.forEach(function (form) {
+								var input = document.createElement('input');
+								input.type = 'hidden';
+								input.name = 'google-recaptcha';
+								input.value = token;
+								form.appendChild(input);
+						});
+				});
+		});
+		</script>
+
+		<!-- Scripts loading-->
+		<script
+			  src="https://code.jquery.com/jquery-3.4.1.min.js"
+			  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+			  crossorigin="anonymous"></script>
+		<script src="{% static 'lp/js/vendors.7631796d20a2f49b760e.js' %}"></script>
+		<script src="{% static 'lp/js/uikit.7631796d20a2f49b760e.js' %}"></script>
+		<script src="{% static 'lp/js/main.7631796d20a2f49b760e.js' %}"></script>
+		<script src="{% static 'lp/js/forms.js' %}"></script>
+	</body>
+
+</html>

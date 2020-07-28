@@ -1,0 +1,114 @@
+{% extends 'base.html' %}{% load sitetree static %}
+{% block title %}
+	{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}{% endblock %}
+{% block meta_description %}{{ instance.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}catalog catalog-models{% endblock %}
+{% block content %}
+
+	<div class="container">
+
+		{% sitetree_breadcrumbs from "breadcrumbs_catalog" template "breadcrumbs.html" %}
+
+		<main class="main-content content-sidebar">
+
+			<aside class="sidebar">
+				<div class="sticky">
+					<div class="widget">
+						<h3 class="widget-title">Выберите раздел:</h3>
+						<ul class="filter">
+							{#                            <li data-filter="all" class="active">ВСЕ {{ instance.title | upper }}</li>#}
+							{% if instance.model == 'MATES' %}
+								<li><a href="/builder/mate/" style="display:block;color:#197fb0;text-decoration:none;">Конструктор EVA
+									Ковриков</a></li>
+							{% endif %}
+							{#                            {% for category in categories %}#}
+							{#                                <li data-filter="{{ category.pk }}">{{ category.title }}</li>#}
+							{#                            {% endfor %}#}
+							{% for category in categories %}
+								{% url 'products_category' category.slug as url %}
+								<li class="{% if url == request.path %} active{% endif %}">
+									<a href="{{ url }}">{{ category.title }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</aside>
+
+			<section class="content">
+				<div class="sticky">
+					<div class="page-heading">
+						<h1 class="catalog-title">{{ instance.title }}</h1>
+						<div class="mobile-catalog-header show-on-mobile">
+							<h4>ВЫБИРИТЕ {{ instance.title|upper }} ДЛЯ ВАШЕГО АВТО</h4>
+							<a href="#" class="btn btn-orange" data-toggle-selector=".sidebar"><i class="fas fa-bars"></i>
+								Выберите {{ instance.title|lower }}</a>
+						</div>
+					</div>
+
+					{#                    <div class="tiles js-products-load-more" data-model="{{ instance.slug }}">#}
+					<div class="tiles">
+						{#                        {% for object in objects %}#}
+						{#                            <a href="{% url 'product_detail' slug=object.slug %}" class=" item isotope-item">#}
+						{#                                {% if object.image %}#}
+						{#                                    <div class="preview" style="background-image:url({{ object.image.url }});">#}
+						{#                                        <img class="screen-reader-text" src="" alt="{{ object.title }}" title="{{ object.title }}">#}
+						{#                                    </div>#}
+						{#                                {% else %}#}
+						{#                                    <div class="preview" data-bg="{% static '500x296.png' %}" style="background-image:url({% static 'tenor.gif' %});"></div>#}
+						{#                                {% endif %}#}
+						{#                                <h2 class="item-title">{{ object.title }}</h2>#}
+						{#                                <div class="info">#}
+						{#                                    <span class="price">{{ object.price }} руб.</span>#}
+						{#                                    <span class="comments-count"><i class="fas fa-comments"></i>{{ object.reviews.count }}</span>#}
+						{#                                </div>#}
+						{#                            </a>#}
+						{#                        {% endfor %}#}
+						{% for category in categories %}
+							<a href="{% url 'products_category' category.slug %}" class="item">
+								{% if category.image %}
+									<div class="preview" style="background-image:url({{ category.image.hd_sm.url }});">
+										<img class="screen-reader-text" src="{{ category.image.hd_sm.url }}" alt="{{ category.title }}"
+										     title="{{ category.title }}">
+									</div>
+								{% else %}
+									<div class="preview" data-bg="{% static 'img/500x296.png' %}"
+									     style="background-image:url({% static 'img/tenor.gif' %});"></div>
+								{% endif %}
+								<h2 class="item-title">{{ category.title }}</h2>
+							</a>
+						{% endfor %}
+					</div>
+				</div>
+			</section>
+
+			<div class="category-info">
+				{% if instance.title_description %}
+					<h3 class="title-description">{{ instance.title_description }}</h3>
+				{% endif %}
+				<div class="category-info-content">
+					{% if instance.video %}
+						<div class="video">
+							<div class="video-responsive">
+								<div class="video-div" data-src="{{ instance.video }}?rel=0&amp;showinfo=0&amp;autoplay=1"></div>
+							</div>
+						</div>
+					{% endif %}
+					{% if instance.description %}
+						<div class="description">
+							{{ instance.description | safe }}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+		</main>
+
+	</div>
+
+{% endblock %}
+{% block controls %}
+	<a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

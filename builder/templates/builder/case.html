@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+{% block styles %}
+	{% render_bundle 'case_builder' 'css' %}
+{% endblock %}
+
+{% block title %}
+{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}{% endblock %}
+{% block meta_description %}{{ instance.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <main class="main-content">
+            <section class="content">
+                <div id="case-builder">
+                  <h1 class="page-title">Конструктор чехлов</h1>
+                </div>
+            </section>
+        </main>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+	{% render_bundle 'case_builder' 'js' %}
+{% endblock %}

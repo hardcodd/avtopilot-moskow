@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+{% block title %}Оформление заказа{% endblock %}
+{% block body_class %}cart order{% endblock %}
+{% block styles %}
+	{% render_bundle 'order' 'css' %}
+{% endblock %}
+{% block content %}
+	<div class="container">
+
+		<main class="main-content">
+
+			<section class="content">
+				<div id="make_order"></div>
+			</section>
+
+		</main>
+
+	</div>
+{% endblock %}
+{% block scripts %}
+	{% render_bundle 'order' 'js' %}
+{#	<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=2541a305-4070-4156-97c3-5e71858d305b"></script>#}
+{% endblock %}

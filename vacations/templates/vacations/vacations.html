@@ -1,0 +1,64 @@
+{% extends 'base.html' %}{% load sitetree thumbnail %}{% load avtopilot_filters %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}vacations{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_vacations" template "breadcrumbs.html" %}
+
+        <main class="main-content">
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">{{ instance.title }}</h1>
+
+                    {{ instance.content|sc:request }}
+
+                    {% if instance.panes %}
+                        <div class="panes">
+                            {% for pane in instance.panes %}
+                                <div class="pane">
+                                    <div class="num">{{ forloop.counter }}</div>
+                                    <strong>{{ pane.title }}</strong>
+                                    <div class="text">{{ pane.content }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {{ instance.content_middle|sc:request }}
+
+                    {% if instance.accordion %}
+                        <ul class="accordion">
+                            {% for item in instance.accordion %}
+                                <li class="accordion-item">
+                                    <div class="tab"><div class="title">{{ forloop.counter }}. {{ item.title }}</div><i class="fas fa-chevron-down"></i></div>
+                                    <div class="accordion-content">{{ item.content|sc:request }}</div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="bottom-image">
+                        <img style="margin: 0 auto" src="{% thumbnail instance.image 768x432 crop %}" alt="{{ instance.title }}" title="{{ instance.title }}">
+                    </div>
+                    <div class="button-div bottom bg-orange">
+                        <strong style="font-size: 18px; color: #fff">Работайте в команде счастливых людей!</strong>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block popup_forms %}{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

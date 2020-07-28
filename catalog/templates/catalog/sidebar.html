@@ -1,0 +1,28 @@
+<aside class="sidebar">
+    <div class="sticky">
+        {% if widget_cases %}
+            <section class="widget widget-products">
+                <h3 class="widget-title">Авточехлы для</h3>
+                {% for item in widget_cases %}
+                    {% if item.image %}
+                        <a href="{% url 'case_detail' slug=item.slug %}" class="item">
+                            <img src="{{ item.image.hd_sm.url }}" alt="{{ item.title }}" title="{{ item.title }}">
+                            <h3 class="item-title">{{ item.title }}</h3>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </section>
+        {% endif %}
+        {% if widget_accessories %}
+            <section class="widget widget-products">
+                <h3 class="widget-title">Аксессуары</h3>
+                {% for item in widget_accessories %}
+                    <a href="{% url 'case_detail' slug=item.slug %}" class="item">
+                        <img src="{{ item.image.hd_sm.url }}" alt="{{ item.title }}" title="{{ item.title }}">
+                        <h3 class="item-title">{{ item.title }}</h3>
+                    </a>
+                {% endfor %}
+            </section>
+        {% endif %}
+    </div>
+</aside>

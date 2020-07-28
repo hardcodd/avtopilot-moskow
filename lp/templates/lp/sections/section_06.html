@@ -1,0 +1,52 @@
+<!-- Section 06-->
+<section class="section section_06" id="buttons_section" style="background:{{ background }}">
+  <div class="container">
+    <div class="section_06__content">
+      <h2 class="section_06__title" hidden>Каталог</h2>
+    </div>
+    <div class="section_06__buttons">
+      {% for button in buttons %}
+        {% if button.modal %}
+          <a class="btn btn-{% if forloop.counter == 1 %}one{% elif forloop.counter == 2 %}two{% elif forloop.counter == 3 %}three{% endif %}" href="#{{ button.modal.id }}" data-uk-toggle>{{ button.text }}</a>
+          {% if button.madal.form %}
+            <div class="uk-modal-full uk-padding-remove" id="{{ button.modal.id }}" data-uk-modal>
+              <div class="uk-modal-dialog">
+                <button class="uk-modal-close-full uk-close-large" type="button" data-uk-close></button>
+                <div class="uk-grid-collapse uk-flex-middle uk-child-width-1-2@s" data-uk-grid>
+                  <div class="uk-background-cover" style="background-image: url('{{ button.modal.image }}');" data-uk-height-viewport></div>
+                  <div class="uk-padding-large">
+                    <h1>{{ button.modal.form.title }}</h1>
+                    <form action="{{ form.action }}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                      <fieldset class="uk-fieldset">
+                        <legend class="uk-legend">{{ button.modal.form.legend }}</legend>
+                        {% for field in button.modal.form.fields %}
+                          <div class="uk-margin">
+                            {% if field.type == 'text' %}
+                              <input class="uk-input" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+                            {% elif field.type == 'email' %}
+                              <input class="uk-input" type="email" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+                            {% elif field.type == 'tel' %}
+                              <input class="uk-input" type="tel" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+                            {% elif field.type == 'hidden' %}
+                              <input type="hidden" name="{{ field.name }}" value="{{ field.value }}" {% if field.required %}required{% endif %}>
+                            {% elif field.type == 'textarea' %}
+                              <textarea class="uk-textarea" rows="5" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}></textarea>
+                            {% elif field.type == 'submit' %}
+                              <input class="uk-button uk-button-primary" type="submit" value="{{ field.text }}">
+                            {% endif %}
+                          </div>
+                        {% endfor %}
+                      </fieldset>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <a class="btn btn-{% if forloop.counter == 1 %}one{% elif forloop.counter == 2 %}two{% elif forloop.counter == 3 %}three{% endif %}" href="{{ button.link }}" rel="{{ button.rel }}" target="{{ button.target }}">{{ button.text }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

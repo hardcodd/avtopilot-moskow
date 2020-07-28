@@ -1,0 +1,13 @@
+{% load mptt_tags %}
+<ul>
+    {% recursetree items %}
+        <li class="{{ node.css_class }}{% if node.url == request.path %} active{% endif %}">
+            <a href="{{ node.url }}">{{ node.title }}{{ node.html|safe }}</a>
+            {% if not node.is_leaf_node %}
+                <ul>
+                    {{ children }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endrecursetree %}
+</ul>

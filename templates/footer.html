@@ -1,0 +1,118 @@
+<footer class="main-footer">
+    <div class="container">{% include 'person.html' %}
+        <div class="grid">
+
+            <div class="widget widget-contacts">
+                <h3 class="widget-title">Контакты</h3>
+                <ul>
+                    <li>
+                        <em>Телефоны:</em>
+                        <div class="links">
+                            <a href="tel:{{ opts.phone_free }}">{{ opts.phone_free }}</a>
+                            <a href="tel:{{ opts.phone|striptags }}">{{ opts.phone|striptags }}</a>
+                        </div>
+                    </li>
+                    <li>
+                        <em>E-mail:</em>
+                        <div class="links">
+                            <a href="mailto:{{ opts.email }}">{{ opts.email }}</a>
+                        </div>
+                    </li>
+                    <li>
+                        <em>Город:</em>
+                        <span>{{ opts.city }}</span>
+                    </li>
+                    <li>
+                        <em>Адрес:</em>
+                        <address>{{ opts.address | safe }}</address>
+                    </li>
+                    <li>
+                        <em>Индекс:</em>
+                        <span>{{ opts.zip }}</span>
+                    </li>
+                    <li>
+                        <em>Время работы:</em>
+                        <span>{{ opts.work_time }}</span>
+                    </li>
+                </ul>
+                {% if opts.social %}
+                    <div class="soc-icons">
+                        {% for item in opts.social %}
+                            <a href="{{ item.link }}" rel="nofollow" target="_blank">{{ item.icon|safe }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if footer_menu_1.get_items %}
+                <div class="widget widget-menu">
+                    <h3 class="widget-title">{{ footer_menu_1.title }}</h3>
+                    {% with footer_menu_1.get_items as items %}
+                        {% include 'navigation/main-menu.html' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+            {% if footer_menu_2.get_items %}
+                <div class="widget widget-menu">
+                    <h3 class="widget-title">{{ footer_menu_2.title }}</h3>
+                    {% with footer_menu_2.get_items as items %}
+                        {% include 'navigation/main-menu.html' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+            {% if footer_menu_3.get_items %}
+                <div class="widget widget-menu">
+                    <h3 class="widget-title">{{ footer_menu_3.title }}</h3>
+                    {% with footer_menu_3.get_items as items %}
+                        {% include 'navigation/main-menu.html' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="copy text-center">
+        <p><small>Copyright &copy; ООО "Автопилот" 2002-{% now 'Y' %}. Все права защищены.</small></p>
+        <a href="/page/info/politika-konfidencialnosti/" class="link" target="_blank"><small>Политика конфиденциальности</small></a>
+        <br>
+        <a href="/page/info/publichnaya-oferta/" class="link" target="_blank"><small>Публичная оферта</small></a>
+    </div>
+</footer>
+
+<div id="call-back" class="popup-form">
+    <h3>Закажите обратный звонок</h3>
+    <p>Мы перезвоним Вам в самое ближайшее время!</p>
+    <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+        <input type="hidden" name="FORM" value="Заказ обратного звонка - кнопка в шапке">
+        <label class="sr-only" for="CHECK_CALLBACK"></label>
+        <input class="sr-only" type="text" id="CHECK_CALLBACK" name="CHECK">
+        {{ callback_form.as_p }}
+        <p class="text-center">
+            <input type="submit" value="Отправить" class="btn btn-orange">
+        </p>
+    </form>
+</div>
+
+<div id="text-us" class="popup-form">
+    <h3>Напишите нам</h3>
+    <p>Напишите нам и мы ответим Вам в самое ближайшее время!</p>
+{#    <script>#}
+{#        var onloadCallback = function() {#}
+{#            // alert("grecaptcha is ready!");#}
+{#        };#}
+{#    </script>#}
+    <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+        <input type="hidden" name="FORM" value="Напишите нам - кнопка в шапке">
+        {{ text_us_form.as_p }}
+{#        <div class="g-recaptcha" data-sitekey="6Lcgca8UAAAAAFXsYGl7fQca8zpwYvdTsTBuva4E"></div>#}
+        <p class="text-center">
+            <input type="submit" value="Отправить" class="btn btn-orange">
+        </p>
+    </form>
+{#     <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>#}
+</div>
+
+
+<!-- 6Lcgca8UAAAAAFXsYGl7fQca8zpwYvdTsTBuva4E -->

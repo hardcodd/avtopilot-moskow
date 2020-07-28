@@ -1,0 +1,98 @@
+{% extends 'base.html' %}{% load sitetree %}{% load static avtopilot_filters thumbnail %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}page page-staff{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_pages" template "breadcrumbs.html" %}
+
+        <main class="main-content">
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">{{ instance.title }} <small><sup>{{ instance.get_position }}</sup></small></h1>
+
+                    <div class="grid">
+                        {% if instance.image %}
+                            <div class="photo image-bg" title="{{ instance.title }}" style="background-image: url({% thumbnail instance.image 480x573 crop upscale %})">
+                                <img src="{% thumbnail instance.image 480x573 crop upscale %}" alt="{{ instance.title }}" title="{{ instance.title }}" class="screen-reader-text">
+                                {% if instance.contact_form %}
+                                    <a href="#" class="icon message" data-form="#form-staff"><i class="fas fa-envelope"></i></a>
+                                {% endif %}
+                                {% if instance.video %}
+                                    <a href="{{ instance.video }}" class="icon video" data-fancybox><i class="fas fa-play"></i></a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="photo image-bg" title="{{ instance.title }}" style="background-image: url({% static 'img/member-avatar.jpg' %})">
+                                <img src="{% static 'img/member-avatar.jpg' %}" alt="{{ instance.title }}" title="{{ instance.title }}" class="screen-reader-text">
+                                {% if instance.contact_form %}
+                                    <a href="#" class="icon message" data-form="#form-staff"><i class="fas fa-envelope"></i></a>
+                                {% endif %}
+                                {% if instance.video %}
+                                    <a href="{{ instance.video }}" class="icon video" data-fancybox><i class="fas fa-play"></i></a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        <div class="text">
+                            {{ instance.content|sc:request }}
+                        </div>
+                    </div>
+
+                    {% if instance.portfolio %}
+                        <section class="portfolio">
+                            <div class="container">
+                                <h3 class="section-title text-center">Работы сотрудника</h3>
+                                <div class="carousel owl-carousel owl-theme staff-portfolio-carousel">
+                                    {% for item in instance.portfolio %}
+                                        {% if item.video %}
+                                            <div class="item item-gallery item-video">
+                                                <div class="video-responsive">
+                                                    <a href="{{ item.get_video_url }}" class="image-bg" style="background-image: url('{{ item.get_video_image }}')" data-fancybox="portfolio" data-caption="{{ item.caption }}"></a>
+                                                </div>
+                                                <h3 class="title">{{ item.title }}</h3>
+                                            </div>
+                                        {% elif item.image %}
+                                            <div class="item item-gallery">
+                                                <div class="video-responsive">
+                                                    <a href="{{ item.image.url }}" class="image-bg" style="background-image: url('{{ item.image.hd_lg.url }}')" data-fancybox="portfolio" data-caption="{{ item.caption }}"></a>
+                                                </div>
+                                                <h3 class="title">{{ item.title }}</h3>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% include 'comment/reviews.html' %}
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <div id="form-staff" class="popup-form">
+        <h3>{{ instance.title }}</h3>
+        <p>Напишите сообщение сотруднику.</p>
+        <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+            <input type="hidden" name="FORM" value="Сообщение сотруднику {{ instance.title }} - Карточка сотрудника">
+            {{ contact_form.as_p }}
+            <p class="text-center">
+                <input type="submit" value="Отправить" class="btn btn-orange">
+            </p>
+        </form>
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

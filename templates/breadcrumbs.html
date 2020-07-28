@@ -1,0 +1,26 @@
+{% load sitetree %}
+{% if sitetree_items|length_is:"1" %}
+{% else %}
+<nav aria-label="breadcrumbs">
+    <ol class="breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">
+        {% for item in sitetree_items %}
+            {% if not forloop.last %}
+                <li class="breadcrumbs-item" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <a itemprop="item" href="{% sitetree_url for item %}">
+                        <span itemprop="name">{{ item.title_resolved }}</span>
+                    </a>
+                    <meta itemprop="position" content="{{ forloop.counter }}" />
+                </li>
+                <li class="divider"><i class="fas fa-angle-right"></i></li>
+            {% else %}
+                <li class="breadcrumbs-item active" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <a itemprop="item" href="{% sitetree_url for item %}">
+                        <span itemprop="name">{{ item.title_resolved }}</span>
+                    </a>
+                    <meta itemprop="position" content="{{ forloop.counter }}" />
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}

@@ -1,0 +1,2 @@
+{% load order_tags %}
+Заказу #{{ order.id }} присвоен статус "{{ order.current_status|verbose_status }}".

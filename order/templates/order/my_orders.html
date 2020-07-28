@@ -1,0 +1,59 @@
+{% extends 'base.html' %}{% load sitetree %}
+{% block title %}Заказы пользователя {{ user.full_name }}{% endblock %}
+{% block body_class %}order-list{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% sitetree_breadcrumbs from "breadcrumbs_account" template "breadcrumbs.html" %}
+
+        <main class="main-content content-sidebar">
+
+            {% include 'registration/sidebar.html' %}
+
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">Мои заказы</h1>
+
+                    <ul class="accordion">
+                        {% for order in orders %}
+                            <li class="accordion-item{% if forloop.counter == 1 %} active{% endif %}">
+                                <div class="tab"><div class="title">Заказ №{{ order.id }} <small>({{ order.timestamp }})</small></div><i class="fas fa-chevron-down"></i></div>
+                                <div class="accordion-content order-item"{% if forloop.counter == 1 %} style="display: block"{% endif %}>
+                                    <div class="info grid">
+                                        <div>
+                                            <h4>Информация о товарах</h4>
+                                            <small>{{ order.products_info|safe }}</small>
+                                        </div>
+                                        <div>
+                                            <h4>Дополнительная информация</h4>
+                                            <small>
+                                                {% if order.delivery %}
+                                                    Способ доставки: <strong>{{ order.delivery }}</strong><br><br>
+                                                {% else %}
+                                                    Способ доставки: <strong>Самовывоз</strong><br><br>
+                                                {% endif %}
+                                                {% if order.address %}Адрес доставки: <strong>{{ order.address }}</strong><br><br>{% endif %}
+                                                {% if order.delivery.price %}
+                                                    Сумма заказа (с учётом доставки): <strong>{{ order.price|add:order.delivery.price }}</strong> руб.<br><br>
+                                                {% else %}
+                                                    Предварительная сумма заказа: <strong>{{ order.price }}</strong> руб.<br><br>
+                                                {% endif %}
+                                            </small>
+                                            {% if order.payment_status == 2 and order.current_status == 11 %}
+                                                <a href="{% url 'yandex_payment' order.pk order.uuid %}" class="btn btn-accent">Оплатить</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+{% endblock %}

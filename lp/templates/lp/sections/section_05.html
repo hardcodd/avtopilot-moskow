@@ -1,0 +1,15 @@
+<!-- Section 05-->
+<section class="section section_05" id="{{ id }}" style="color:{{ color }};background:{{ background }}">
+	<div class="container">
+		<div class="section_05__content">
+			<h2 class="section_05__title" hidden>{{ title }}</h2>
+		</div>
+		<div class="row">
+			{% for item in items %}
+				<div class="col">
+					<div class="item"><a href="{{ item.link }}" rel="{{ item.rel }}" target="{{ item.target }}">{{ item.text }}</a></div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</section>

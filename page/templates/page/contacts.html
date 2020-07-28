@@ -1,0 +1,122 @@
+{% extends 'base.html' %}{% load sitetree %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}page page-contacts{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_pages" template "breadcrumbs.html" %}
+
+        <main class="main-content">
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">{{ instance.title }}</h1>
+
+                    <div class="grid">
+
+                        <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+                            <input type="hidden" name="FORM" value="Форма на странице Контакты">
+                            {{ form }}
+                            <input type="submit" class="btn btn-accent" value="Отправить">
+                        </form>
+
+                        <div class="widget widget-contacts">
+                            <h3 class="widget-title">Контакты</h3>
+                            <ul>
+                                <li>
+                                    <em>Телефоны:</em>
+                                    <div class="links">
+                                        <a href="tel:{{ opts.phone_free }}">{{ opts.phone_free }}</a>
+                                        <a href="tel:{{ opts.phone|striptags }}">{{ opts.phone|striptags }}</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <em>E-mail:</em>
+                                    <div class="links">
+                                        <a href="mailto:{{ opts.email }}">{{ opts.email }}</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <em>Город:</em>
+                                    <span>{{ opts.city }}</span>
+                                </li>
+                                <li>
+                                    <em>Адрес:</em>
+                                    <address>{{ opts.address | safe }}</address>
+                                </li>
+                                <li>
+                                    <em>Индекс:</em>
+                                    <span>{{ opts.zip }}</span>
+                                </li>
+                                <li>
+                                    <em>Время работы:</em>
+                                    <span>{{ opts.work_time }}</span>
+                                </li>
+                            </ul>
+                            {% if opts.social %}
+                                <div class="soc-icons">
+                                    {% for item in opts.social %}
+                                        <a href="{{ item.link }}" rel="nofollow" target="_blank">{{ item.icon|safe }}</a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if opts.map %}
+                            <div class="map">
+                                {{ opts.map|safe }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="buttons">
+                        <a href="#" class="btn btn-orange" data-scroll-to="#section-other-countries">Купить в другой стране</a>
+                        <a href="#" class="btn btn-blue" data-scroll-to="#section-installs">Установить чехлы</a>
+                    </div>
+
+                    <div class="other">
+                        {% if partners %}
+                            <section>
+                                <h2 class="section-title title-line">Наши партнёры в России</h2>
+                                {% with partners as items %}
+                                    {% include 'page/partners.html' %}
+                                {% endwith %}
+                                <a href="#" class="btn btn-dark" data-scroll-top>Наверх</a>
+                            </section>
+                        {% endif %}
+                        {% if other_partners %}
+                            <section id="section-other-countries">
+                                <h2 class="section-title title-line">Наши партнёры в других странах</h2>
+                                {% with other_partners as items %}
+                                    {% include 'page/partners.html' %}
+                                {% endwith %}
+                                <a href="#" class="btn btn-dark" data-scroll-top>Наверх</a>
+                            </section>
+                        {% endif %}
+                        {% if installs %}
+                            <section id="section-installs">
+                                <h2 class="section-title title-line">Где можно установить</h2>
+                                {% with installs as items %}
+                                    {% include 'page/partners.html' %}
+                                {% endwith %}
+                                <a href="#" class="btn btn-dark" data-scroll-top>Наверх</a>
+                            </section>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

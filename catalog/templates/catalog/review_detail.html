@@ -1,0 +1,72 @@
+{% extends 'base.html' %}{% load sitetree static %}
+{% block title %}
+{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}{% endblock %}
+{% block meta_description %}{{ instance.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}post single-post{% endblock %}
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_blog" template "breadcrumbs.html" %}
+
+        <main class="main-content">
+
+{#            <aside class="sidebar">#}
+{#                <div class="sticky">#}
+{#                    <div class="widget">#}
+{#                        <h3 class="widget-title">Категории</h3>#}
+{#                        <ul class="nav-list-lines">#}
+{#                            {% for category in categories %}#}
+{#                                <li{% if instance.category.slug == category.slug %} class="active"{% endif %}>#}
+{#                                    <a href="{% url 'category' category.slug %}">{{ category.title }}</a>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </aside>#}
+
+            <section class="content">
+                <div class="sticky">
+                    <article>
+                        <h1 class="page-title">{{ instance.title }}</h1>
+                        {% if instance.case_set.count > 1 %}
+                            <p class="text-center"><a href="/cases/" class="btn btn btn-accent">Купить авточехлы с гарантией</a></p>
+                        {% elif instance.case_set.count == 1 %}
+                            <p class="text-center"><a href="{{ instance.case_set.first.get_absolute_url }}" class="btn btn btn-accent">Купить чехлы для {{ instance.case_set.first.title }}</a></p>
+                        {% endif %}
+                        {% if instance.video %}
+                            <div style="max-width: 800px; margin: 0 auto">
+                                <div class="video">{{ instance.video }}</div>
+                            </div>
+                        {% elif instance.image %}
+                            <div style="max-width: 800px; margin: 0 auto">
+                                <div class="video">
+                                    <div class="video-responsive">
+                                        <div class="video-preview" style="background-image: url({{ instance.image.url }});"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="text">
+                            {{ instance.content|safe }}
+                        </div>
+                        {% if instance.case_set.count > 1 %}
+                            <p class="text-center"><a href="/cases/" class="btn btn btn-accent">Купить авточехлы с гарантией</a></p>
+                        {% elif instance.case_set.count == 1 %}
+                            <p class="text-center"><a href="{{ instance.case_set.first.get_absolute_url }}" class="btn btn btn-accent">Купить чехлы для {{ instance.case_set.first.title }}</a></p>
+                        {% endif %}
+                    </article>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать отзыв</a>
+{% endblock %}

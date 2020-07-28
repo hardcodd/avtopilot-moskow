@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div>
+        <form name="ShopForm" class="pay-form" method="POST" action="https://money.yandex.ru/eshop.xml">
+            <p class="total">Сумма заказа: <b>{{ form.sum.value }}</b> руб.</p>
+
+            {{ form.as_p }}
+
+            <p><input type="submit" class="btn btn-accent" value="Оплатить"></p>
+            <p>Электронный чек будет выслан на {{ customer_contact }}</p>
+            <input type="hidden" name="ym_merchant_receipt" value='{{ receipt }}'>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% load sitetree %}
+
+{% block content %}
+
+    <div class="container">
+        {% sitetree_breadcrumbs from "breadcrumbs_account" template "breadcrumbs.html" %}
+
+        <section class="main-content">
+            <main class="content">
+                <div class="sticky">
+                    <form action="{% url 'registration' %}" method="post" class="auth-form">{% csrf_token %}
+                        <h2>Регистрация</h2>
+
+                        <p>{{ form.email.label_tag }}{{ form.email }}{{ form.email.errors }}</p>
+                        <p>{{ form.password1.label_tag }}{{ form.password1 }}{{ form.password1.errors }}</p>
+                        <p>{{ form.password2.label_tag }}{{ form.password2 }}{{ form.password2.errors }}</p>
+
+                        <input type="submit" value="Регистрация">
+                        <a href="{% url 'login' %}">Вход</a>
+
+                    </form>
+                </div>
+            </main>
+        </section>
+    </div>
+
+{% endblock %}

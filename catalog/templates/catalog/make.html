@@ -1,0 +1,91 @@
+{% extends 'base.html' %}{% load sitetree static avtopilot_filters %}
+{% block title %}
+{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}{% endblock %}
+{% block meta_description %}{{ instance.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}catalog catalog-models{% endblock %}
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_catalog" template "breadcrumbs.html" %}
+
+        <main class="main-content content-sidebar">
+
+            <aside class="sidebar">
+                <div class="sticky">
+                    <div class="widget">
+                        <h3 class="widget-title">Выберите модель:</h3>
+                        <ul class="filter filter-make">
+                            <li data-filter-js="*" class="active">Все {{ instance.title }}</li>
+                            {% for model in models %}
+                                <li data-filter-js="{{ model.title | _slugify }}">{{ model.make.title }} {{ model.title }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="content">
+                <div class="sticky">
+                    <div class="page-heading">
+                        <h1 class="catalog-title">{{ instance.title }}</h1>
+                        <div class="mobile-catalog-header show-on-mobile">
+                            <h4>ВЫБИРИТЕ СВОЙ АВТОМОБИЛЬ</h4>
+                            <a href="#" class="btn btn-orange btn-small show-on-mobile open-filter-btn" data-toggle-selector=".sidebar" >Выберите свою модель</a>
+                        </div>
+                    </div>
+
+                    <div class="tiles">
+                        {% for object in objects %}
+                            <a href="{% url 'case_detail' slug=object.slug %}" class="js-filter-{{ object.model.title | _slugify }} item isotope-item">
+                                {% if object.image %}
+                                    <div class="preview" data-bg="{{ object.image.hd_xs.url }}" style="background-image:url({% static 'img/tenor.gif' %});">
+                                        <img class="screen-reader-text" src="{{ object.image.hd_xs.url }}" alt="{{ object.title }}" title="{{ object.title }}">
+                                    </div>
+                                {% else %}
+                                    <div class="preview" data-bg="{% static 'img/500x296.png' %}" style="background-image:url({% static 'img/tenor.gif' %});"></div>
+                                {% endif %}
+                                <h2 class="item-title">{{ object.title }}</h2>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="category-info">
+                        {% if instance.title_description %}
+                            <h3 class="title-description">{{ instance.title_description }}</h3>
+                        {% endif %}
+                        <div class="category-info-content">
+                            {% if instance.video %}
+                                <div class="video">
+                                    <div class="video-responsive">
+                                        <div class="video-div" data-src="{{ instance.video }}"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if instance.description %}
+                                <div class="description">
+                                    {{ instance.description | safe }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="page-heading">
+                        <div class="mobile-catalog-header show-on-mobile">
+                            <h4>ВЫБИРИТЕ СВОЙ АВТОМОБИЛЬ</h4>
+                            <a href="#" class="btn btn-orange btn-small show-on-mobile open-filter-btn" data-toggle-selector=".sidebar" >Выберите свою модель</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать марку</a>
+{% endblock %}

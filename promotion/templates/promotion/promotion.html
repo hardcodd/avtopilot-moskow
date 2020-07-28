@@ -1,0 +1,99 @@
+{% extends 'base.html' %}{% load sitetree %}{% load avtopilot_filters %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}promotion-page{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_promotion" template "breadcrumbs.html" %}
+
+        <main class="main-content content-sidebar-reverse">
+
+            <h1 class="page-title">{{ instance.title }}</h1>
+
+            <aside class="sidebar">
+                <div class="sticky">
+
+                    <div class="widget">
+                        <h3 class="widget-title">Акции для</h3>
+                        <ul class="nav-list-lines">
+                            {% for category in categories %}
+                                {% url 'promotion_category' category.slug as category_url %}
+                                <li{% if request.path == category_url %} class="active"{% endif %}>
+                                    <a href="{{ category_url }}">{{ category.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    {% if widget_cases %}
+                        <section class="widget widget-products">
+                            <h3 class="widget-title">Авточехлы для</h3>
+                            {% for item in widget_cases %}
+                                {% if item.image %}
+                                    <a href="{% url 'case_detail' slug=item.slug %}" class="item">
+                                        <img src="{{ item.image.url }}" alt="{{ item.title }}" title="{{ item.title }}">
+                                        <h3 class="item-title">{{ item.title }}</h3>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </section>
+                    {% endif %}
+                    {% if widget_accessories %}
+                        <section class="widget widget-products">
+                            <h3 class="widget-title">Аксессуары</h3>
+                            {% for item in widget_accessories %}
+                                <a href="{% url 'case_detail' slug=item.slug %}" class="item">
+                                    <img src="{{ item.image.url }}" alt="{{ item.title }}" title="{{ item.title }}">
+                                    <h3 class="item-title">{{ item.title }}</h3>
+                                </a>
+                            {% endfor %}
+                        </section>
+                    {% endif %}
+
+                </div>
+            </aside>
+
+            <section class="content">
+                <div class="sticky">
+                    <div class="grid-items">
+                        {% if promotions %}
+                            {% for promotion in promotions %}
+                                <div class="promotion">
+                                    <div class="video-responsive">
+                                        <div class="image image-bg" style="background-image: url({{ promotion.image.url }});">
+                                            {% if promotion.get_discount %}<span class="badge">{{ promotion.get_discount }}</span>{% endif %}
+                                            <img class="screen-reader-text" src="{{ promotion.image.url }}" alt="{{ promotion.title }}" title="{{ promotion.title }}">
+                                            <div class="links">
+                                                <a href="{% url 'promotion_detail' promotion.slug %}"><span>Подробнее</span> <i class="fas fa-eye"></i></a>
+                                                {% if promotion.video %}
+                                                    <a href="{{ promotion.video_url }}" data-fancybox class="link"><span>Видео</span> <i class="fas fa-play-circle"></i></a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'promotion_detail' promotion.slug %}"><h2 class="promotion-title">{{ promotion.title }}</h2></a>
+                                    <div class="to-end">
+                                        До конца акции: <span>{% if promotion.to_end %}{{ promotion.to_end }}{% else %}Завершена{% endif %}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    {% include 'promotion/pagination.html' %}
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

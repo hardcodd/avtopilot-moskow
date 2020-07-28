@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>Онлайн оплата</title>
+        <style>
+            .yandex-pay-form strong {
+                font-size: 22px;
+                font-weight: normal;
+            }
+            .yandex-pay-form {
+                font-family: sans-serif;
+                max-width: 400px;
+                display: block;
+                margin: 100px auto;
+                border: 1px solid rgba(0,0,0,0.1);
+                padding: 20px;
+                box-sizing: border-box;
+                background: #fff;
+                box-shadow: 2px 2px 16px rgba(0,0,0,0.16);
+                border-radius: 3px;
+            }
+            .yandex-pay-form label {
+                font-size: 14px;
+                margin-bottom: 5px;
+                display: inline-block;
+            }
+            .yandex-pay-form select {
+                background-color: #fff;
+                border-radius: 3px;
+                padding: 5px 10px;
+            }
+            .yandex-pay-form input[type=submit] {
+                background-color: #ffdb4d;
+                border: none;
+                border-radius: 3px;
+                font-size: 16px;
+                padding: 5px 20px;
+                cursor: pointer;
+            }
+            .yandex-pay-form input[type=submit]:hover {
+                background-color: #f1ce47;
+            }
+        </style>
+    </head>
+    <body>
+        <form name="ShopForm" method="POST" action="https://money.yandex.ru/eshop.xml" class="yandex-pay-form">
+            <strong>Сумма заказа: <b>{{ form.sum.value }} руб.</b></strong>
+            {{ form.as_p|safe }}
+            <p><input type="submit" value="Оплатить"></p>
+        </form>
+    </body>
+</html>

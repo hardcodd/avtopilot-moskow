@@ -1,0 +1,125 @@
+<!-- Header -<start>- -->
+	<header class="header_02 uk-light" id="{{ id }}">
+		<div class="foreground" style="background:linear-gradient(90deg, #000000, rgba(0, 0, 0, 0.6));"></div>
+		<div class="header_02__navigation">
+			<div class="container">
+				<div class="row">
+					<div class="nav_col col"><a class="logo" href="{{ logo.url }}"><img src="{{ logo.image }}" alt="{{ title|striptags|escape }}"></a></div>
+					<div class="nav_col col"><a class="btn" href="#modal-full" data-uk-toggle>Заказать звонок</a>
+						<nav class="navigation" role="navigation">
+							<ul class="navigation__list" itemscope itemtype="https://schema.org/SiteNavigationElement">
+								{% for item in navigation %}
+									<li class="navigation__item" itemprop="name">
+										<a class="navigation__link {{ item.class }}" href="{{ item.link }}" rel="{{ item.rel }}" target="{{ item.target }}" itemprop="url" title="{{ item.text|striptags|escape }}">{{ item.text|safe }}</a>
+									</li>
+								{% endfor %}
+							</ul>
+						</nav>
+						<div class="mobile-navigation"></div>
+						<div class="nav_bars nav-toggle"><span></span><span></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="header_02__bg i-bg"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ background_image }}" alt="{{ title|striptags }}"></div>
+		<div class="container">
+			<div class="row">
+				<div class="header_02__col col">
+					<h3 class="header_02__title mobile-title"><small>{{ title|safe }}</small></h3>
+					<div class="header_02__slider">
+						<div class="slider">
+							{% for slide in slider %}
+								<div class="slider__item"><img src="{{ slide.image }}" alt="{{ slide.alt }}"></div>
+							{% endfor %}
+						</div>
+						<div class="slider__navigation">
+							<div class="prev-arrow">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z"/></svg>
+							</div>
+							<div class="next-arrow">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+							</div>
+						</div>
+					</div>
+					<div class="header_02__slider_nav uk-visible@m">
+						<div class="slider">
+							{% for slide in slider %}
+								<div class="slider__item"><img src="{{ slide.image }}" alt="{{ slide.alt }}"></div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				<div class="header_02__col col">
+					<h1 class="header_02__title">{{ title|safe }}</h1>
+					<form class="header_02__form form" action="{{ form.action }}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+						<h3 class="form__title">{{ form.title }}</h3>
+						{% for field in form.fields %}
+							{% if field.type == 'text' %}
+								<input class="form__input" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+							{% elif field.type == 'email' %}
+								<input class="form__input" type="email" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+							{% elif field.type == 'tel' %}
+								<input class="form__input" type="tel" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+							{% elif field.type == 'hidden' %}
+								<input type="hidden" name="{{ field.name }}" value="{{ field.value }}" {% if field.required %}required{% endif %}>
+							{% elif field.type == 'textarea' %}
+								<textarea class="form__input form__input--text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" cols="30" rows="10" {% if field.required %}required{% endif %}></textarea>
+							{% elif field.type == 'submit' %}
+								<input class="form__btn btn" type="submit" value="{{ field.text }}">
+							{% endif %}
+						{% endfor %}
+					</form>
+					<div class="header_02__buttons">
+						{% for button in buttons %}
+							{% if button.modal %}
+								<a class="btn btn-{% if forloop.counter == 1 %}one{% elif forloop.counter == 2 %}two{% elif forloop.counter == 3 %}three{% endif %}" href="#{{ button.modal.id }}" data-uk-toggle>{{ button.text }}</a>
+								{% if button.modal.form %}
+									<div class="uk-modal-full uk-padding-remove" id="{{ button.modal.id }}" data-uk-modal>
+										<div class="uk-modal-dialog">
+											<button class="uk-modal-close-full uk-close-large" type="button" data-uk-close></button>
+											<div class="uk-grid-collapse uk-flex-middle uk-child-width-1-2@s" data-uk-grid>
+												<div class="uk-background-cover" style="background-image: url('{{ button.modal.image }}');" data-uk-height-viewport></div>
+												<div class="uk-padding-large">
+													<h1>{{ button.modal.form.title }}</h1>
+													<form action="{{ form.action }}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+														<fieldset class="uk-fieldset">
+															<legend class="uk-legend">{{ button.modal.form.legend }}</legend>
+															{% for field in button.modal.form.fields %}
+																<div class="uk-margin">
+																	{% if field.type == 'text' %}
+																		<input class="uk-input" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+																	{% elif field.type == 'email' %}
+																		<input class="uk-input" type="email" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+																	{% elif field.type == 'tel' %}
+																		<input class="uk-input" type="tel" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+																	{% elif field.type == 'hidden' %}
+																		<input type="hidden" name="{{ field.name }}" value="{{ field.value }}" {% if field.required %}required{% endif %}>
+																	{% elif field.type == 'textarea' %}
+																		<textarea class="uk-textarea" rows="5" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}></textarea>
+																	{% elif field.type == 'submit' %}
+																		<input class="uk-button uk-button-primary" type="submit" value="{{ field.text }}">
+																	{% endif %}
+																</div>
+															{% endfor %}
+														</fieldset>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								{% endif %}
+							{% else %}
+								<a class="btn btn-{% if forloop.counter == 1 %}one{% elif forloop.counter == 2 %}two{% elif forloop.counter == 3 %}three{% endif %}" href="{{ button.link }}" rel="{{ button.rel }}" target="{{ button.target }}">{{ button.text }}</a>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="header_02__scroll_down scroll-down">
+
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 256.3L7 120.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0L313 86.3c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.4 9.5-24.6 9.5-34 .1zm34 192l136-136c9.4-9.4 9.4-24.6 0-33.9l-22.6-22.6c-9.4-9.4-24.6-9.4-33.9 0L160 352.1l-96.4-96.4c-9.4-9.4-24.6-9.4-33.9 0L7 278.3c-9.4 9.4-9.4 24.6 0 33.9l136 136c9.4 9.5 24.6 9.5 34 .1z"/></svg>
+
+		</div>
+	</header>
+	<!-- Header -</end>- -->

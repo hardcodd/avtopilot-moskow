@@ -1,0 +1,475 @@
+{% extends 'base.html' %}{% load sitetree static %}
+{% load render_bundle from webpack_loader %}
+{% block title %}
+	{% if instance.seo_title %}{{ instance.seo_title }}{% else %}{{ instance.title }}{% endif %}{% endblock %}
+{% block meta_description %}{{ instance.meta_description }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}case-detail{% endblock %}
+{% block styles %}
+	{% render_bundle 'product_detail' %}
+{% endblock %}
+
+{% block content %}
+
+	<div class="container">
+
+		{% sitetree_breadcrumbs from "breadcrumbs_catalog" template "breadcrumbs.html" %}
+
+		<main class="main-content product-detail">
+			<section class="content">
+				<div class="sticky">
+
+					<h1 class="product-title">{{ instance.title }}</h1>
+
+					<div class="top-info">
+
+						<div class="rating">
+							<span>Рейтинг {{ instance.total_rating }}%</span>
+							<div class="back">
+								<div class="fill"
+								     style="width: {{ instance.total_rating }}%; background-color: hsl({{ instance.total_rating }}, 90%, 40%)"></div>
+							</div>
+						</div>
+
+						<div class="count-reviews">{{ instance.reviews.count }} отзывов</div>
+
+						{#                    {% if instance.info %}#}
+						{#                        <div class="discount">{{ instance.info }}</div>#}
+						{#                    {% endif %}#}
+
+						{% if instance.code %}
+							<div class="code">Артикул: <strong data-code="{{ instance.code }}">{{ instance.code }}</strong></div>
+						{% endif %}
+
+						<a href="#" class="btn btn-blue btn-outline" data-form="#call-back">Получить консультацию</a>
+
+						<div class="counts">
+							<div class="count-views">
+								<i class="fas fa-eye"></i>
+								<span>{{ instance.views }}</span>
+							</div>
+							<div class="count-bought">
+								<i class="far fa-handshake"></i>
+								<span>3</span>
+							</div>
+						</div>
+
+					</div>
+
+					<form action="{% url 'add_to_cart' %}" data-weight="{{ instance.weight }}"
+					      data-action_to_remove="{% url 'remove_from_cart' %}" class="product-form" method="post">{% csrf_token %}
+						<input type="hidden" name="product_id" value="{{ instance.pk }}">
+						<input type="hidden" name="title" value="{{ instance.title }}">
+						<input type="hidden" name="url" value="{% url 'case_detail' slug=instance.slug %}">
+
+						<div class="block block-media"> {% comment %}v3d{% endcomment %}
+							<div class="preview">
+								{#                            <video autoplay loop>#}
+								{#                                <source src="">#}
+								{#                            </video>#}
+								<a href="{% static 'img/386x386.png' %}" data-fancybox="gallery" data-caption="{{ instance.title }}">
+									<img src="{% static 'img/386x386.png' %}" alt="{{ instance.title }}" title="{{ instance.title }}">
+								</a>
+							</div>
+							<div class="selected-color"></div>
+							<div class="links-popup">
+								{% if instance.children_images %}
+									{% for image in instance.children_images.all %}
+										{% if forloop.first %}
+											<a href="{{ image.image.url }}"
+											   data-fancybox="gallery"
+											   data-caption="{{ image.title }}"
+											   class="link link-gallery">
+												<img class="screen-reader-text" src="{{ image.image.hd_sm.url }}" alt="{{ image.alt }}"
+												     title="{{ image.title }}">
+												<i class="far fa-images"></i> Фото салона
+											</a>
+										{% else %}
+											<a href="{{ image.image.url }}"
+											   data-fancybox="gallery"
+											   data-caption="{{ image.title }}"
+											   class="screen-reader-text">
+												<img class="screen-reader-text" src="{{ image.image.hd_sm.url }}" alt="{{ image.alt }}"
+												     title="{{ image.title }}">
+											</a>
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+								{% if instance.video %}
+									<a href="{{ instance.video }}" data-fancybox class="link"><i class="fab fa-youtube"></i> Видео в
+										салоне</a>
+								{% endif %}
+							</div>
+
+							{#                        <div class="links-popup">#}
+							{#                            <a href="#" data-fancybox data-caption="" class="link link-gallery">#}
+							{#                                <i class="fas fa-camera"></i> Фото 3D#}
+							{#                            </a>#}
+							{#                            <a href="#" data-fancybox class="link">#}
+							{#                                <i class="fas fa-video"></i> Видео в цвете#}
+							{#                            </a>#}
+							{#                        </div>#}
+
+						</div>
+
+						<div class="block block-material">
+							<h3 class="block-title">Выберите материал</h3>
+							{% if instance.children_materials.exists %}
+								<div class="tab-content">
+									{% for material in instance.children_materials.all %}
+										<input type="radio" id="material-id-{{ material.pk }}" name="props[material]"
+										       class="material-price"
+										       data-filter="material-id-{{ material.pk }}"
+										       data-price="{{ material.price }}"
+										       data-stock="{{ material.stock }}"
+										       value="{{ material.title }}"{% if forloop.first %} checked{% endif %}>
+										<label for="material-id-{{ material.pk }}"><span class="title">{{ material.title }}</span><span
+												class="cost">{{ material.price }} руб.</span></label>
+									{% endfor %}
+								</div>
+							{% else %}
+								<p>Материалов нет</p>
+							{% endif %}
+						</div>
+
+						<div class="block block-color">
+							<h3 class="block-title">Выберите
+								цвет {% comment %}<a href="#" class="btn btn-dark btn-outline disabled">Конструктор чехлов</a>{% endcomment %}</h3>
+							<div class="colors tab-content">
+								{% if instance.children_materials.exists %}
+									{% for material in instance.children_materials.all %}
+										{% if material.colors.exists %}
+											{% for color in material.get_colors %}
+												{% if color.big_image and color.image %}
+													<input type="radio" id="color-id-{{ color.pk }}"
+													       class="product-color"
+													       data-filter="material-id-{{ material.pk }}"
+													       data-code="{{ color.code }}"
+													       data-video="{{ color.video }}"
+													       name="props[color]"
+													       value="{{ color.color_name }}"
+													       data-image="{{ color.big_image.sq_sm.url }}">
+													<label for="color-id-{{ color.pk }}" data-filter="material-id-{{ material.pk }}">
+														<img src="{{ color.image.filter.url }}" alt="{{ color.color_name }}"
+														     title="{{ color.color_name }}">
+													</label>
+												{% else %}
+													<img src="{% static 'img/30x40.png' %}" alt="{{ instance.title }}"
+													     title="{{ instance.title }}">
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+								{% else %}
+									<p>Материалов нет</p>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="block block-install">
+							<p><a href="{% url 'case_builder' %}" class="btn btn-blue">Подобрать чехлы индивидуально</a></p>
+							{% if instance.install_price %}
+								<label for="need-install"><strong>Установка <span class="install-price"
+								                                                  data-price="{{ instance.install_price }}"></span></strong></label>
+								<input type="checkbox" name="install" id="need-install">
+								<div><small><i class="fas fa-exclamation-circle"></i> Выезд за пределы МКАД 20руб/км</small></div>
+							{% endif %}
+						</div>
+
+
+						<div class="block block-picture">
+							<h3 class="block-title">Кузов</h3>
+							{% if instance.image %}
+								<img src="{{ instance.image.mini.url }}" alt="{{ instance.title }}" title="{{ instance.title }}">
+							{% else %}
+								<h5>Загрузите изображение кузова!</h5>
+								<img src="{% static 'img/180x110.png' %}" alt="{{ instance.title }}" title="{{ instance.title }}">
+							{% endif %}
+						</div>
+
+						<div class="block block-action">
+							<div class="info">
+								<span class="stock"><i class="fas fa-check"></i> Уточняйте наличие</span>
+								{% if instance.guarantee %}
+									{#                                <a href="{% url 'guarantee' slug=instance.guarantee.slug %}" class="guarantee"><i class="fas fa-check"></i> Гарантия {{ instance.guarantee.period }}</a>#}
+									<span class="guarantee"><i class="fas fa-check"></i> Гарантия {{ instance.guarantee.period }}</span>
+								{% else %}
+									<span class="no-guarantee"><i class="fas fa-times" style="color: red;"></i> Без гарантии</span>
+								{% endif %}
+							</div>
+							<div class="quantity">
+								<div class="total"><span>0 руб.</span></div>
+								<div class="count">
+									<label for="product-count">Количество:</label>
+									<input type="number" id="product-count" name="product-count" min="1" max="10" value="1">
+								</div>
+							</div>
+							<div class="buttons">
+								<a href="#" class="btn btn-orange buy-one-click">Купить в 1 клик</a>
+								<button type="submit" class="btn btn-accent add-to-cart">В корзину <i class="fas fa-cart-plus"></i>
+								</button>
+							</div>
+							<div class="more">
+								<div class="title">Также для этой модели:</div>
+								<a href="{% url 'catalog_page' slug='accessories' %}" data-title="Аксессуары">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 87.198 87.199">
+										<path
+												d="M43.6,0A43.6,43.6,0,1,0,87.2,43.6,43.6,43.6,0,0,0,43.6,0Zm0,79.683A36.083,36.083,0,1,1,79.683,43.6,36.083,36.083,0,0,1,43.6,79.683Z"/>
+										<g transform="translate(32.581 54.602)">
+											<path d="M62.552,104.76l.026.292-.068-.281Z" transform="translate(-62.51 -104.76)"/>
+											<path
+													d="M75.464,123.708a34.4,34.4,0,0,0,8.907-1.178L80.1,139.548H71.237L67,122.619A33.274,33.274,0,0,0,75.464,123.708Z"
+													transform="translate(-64.66 -113.268)"/>
+											<path d="M104.727,104.77l-.057.214.021-.224Z" transform="translate(-82.696 -104.76)"/>
+											<path
+													d="M68.921,146.05s.261,3.5-3.033,2.517.756,2.606,2.382,2.689,4.138.787,4.17,0a25.331,25.331,0,0,0-1.131-4.133Z"
+													transform="translate(-63.526 -124.529)"/>
+											<path
+													d="M91.187,146.05s-.255,3.5,3.033,2.517-.756,2.606-2.382,2.689-4.133.787-4.17,0a24.811,24.811,0,0,1,1.131-4.133Z"
+													transform="translate(-74.556 -124.529)"/>
+										</g>
+										<g transform="translate(4.999 34.27)">
+											<path
+													d="M27,71.207a9.043,9.043,0,0,1-.208-4.295l-9.642,1.965a.408.408,0,0,0-.073,0c-3.575.724-3.768-3.127-3.768-3.127H11.993a26.3,26.3,0,0,0-2.085,3.57,1.813,1.813,0,0,0,.975,2.127L10.7,75.272c-.407,0-.678.094-.761.344a13.254,13.254,0,0,0-.25,4.634c.208,1.042.641,3.331.855,3.331s2.533-.229,2.533-.229.261-2.5,3.648-2.5h0a5.311,5.311,0,0,1,1.616.224l12.874,4.1Zm-7.036,3.8-3-.365v-.881l3-.365Zm1.611,3H20.7l-.365-3h1.611ZM20.333,73.4l.365-3h.881l.365,3ZM25.3,74.642l-3,.365V73.4l3,.365Z"
+													transform="translate(-9.591 -65.75)"/>
+											<path
+													d="M137.456,75.706c-.068-.25-.349-.344-.751-.344l-.182-3.826a1.845,1.845,0,0,0,.98-2.127,27.258,27.258,0,0,0-2.085-3.57H134.1s-.193,3.831-3.763,3.127h-.078l-9.658-2a8.782,8.782,0,0,1-.2,4.295L116.18,85.281l12.884-4.1a5.285,5.285,0,0,1,1.616-.224h0c3.383,0,3.648,2.5,3.648,2.5s2.325.229,2.544.229.636-2.309.85-3.331A13.031,13.031,0,0,0,137.456,75.706Zm-12.509,3.341H122.7v-2.3h2.252Zm0-4.785H122.7V71.943h2.252Zm3.977,4.806h-2.252V76.744h2.252Zm0-4.806h-2.252V71.943h2.252Z"
+													transform="translate(-60.625 -65.793)"/>
+										</g>
+										<g transform="translate(23.877 27.319)">
+											<path
+													d="M82.006,75.626H69.663a2.7,2.7,0,0,0-2.147.881.839.839,0,0,0-.151.782l2.319,7.1a2.391,2.391,0,0,0,2.3,1.162h7.683a2.413,2.413,0,0,0,2.293-1.162l2.319-7.1a.823.823,0,0,0-.146-.782,2.705,2.705,0,0,0-2.127-.881Z"
+													transform="translate(-56.112 -63.526)"/>
+											<path
+													d="M83.311,57.479h0c-17.778-11.128-35.01-.521-35.562,0h0a6.864,6.864,0,0,0-1.631,6.812l5.525,18.352a6.182,6.182,0,0,0,2.882,3.68h0a5.384,5.384,0,0,0,1.345.521,31.643,31.643,0,0,0,18.837.083,5.171,5.171,0,0,0,1.835-.6h0a6.171,6.171,0,0,0,2.888-3.68l5.514-18.357A6.854,6.854,0,0,0,83.311,57.479ZM75.654,66.72l-2.319,7.1a4.021,4.021,0,0,1-3.972,2.356H61.681a4.018,4.018,0,0,1-3.951-2.366L55.411,66.72a2.559,2.559,0,0,1,.391-2.345,4.409,4.409,0,0,1,3.56-1.6H71.7a4.4,4.4,0,0,1,3.555,1.6,2.559,2.559,0,0,1,.4,2.345Z"
+													transform="translate(-45.81 -52.415)"/>
+										</g>
+									</svg>
+								</a>
+								<a href="{% url 'catalog_page' slug='capes' %}" data-title="Накидки">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 59.836 87.977">
+										<path
+												d="M23.461,87.463c-2.124-.68-2.875-1.174-6.138-4.041A41.85,41.85,0,0,0,8.37,77.068C5.057,75.46,4,74.106,4,71.481a5.163,5.163,0,0,1,2.88-4.308c1.355-.794,1.411-.8,3.727-.446,2.114.324,3.146.269,10.225-.54C34.763,64.6,37.678,64.278,38.136,64.3c.247.013,2.2.37,4.342.794s5.686.971,7.877,1.216c5.609.628,7.37,1.492,8.944,4.39.428.788.542,1.666.537,4.144-.006,2.761-.1,3.345-.788,4.791a8.56,8.56,0,0,1-3.479,4.009c-1.018.526-2.135.711-11.145,1.841-3.376.423-8.139,1.167-10.584,1.652-5.061,1-7.967,1.095-10.38.323ZM9.648,64.2a12.639,12.639,0,0,1-7.4-7.115C.748,53.077,0,45.465,0,34.119c0-9.238.375-13.743,1.254-14.973,1.5-2.1,4.343-2.407,21.16-2.313,15.949.089,15.21-.242,17.537,7.853,3.867,13.453,5.857,28.151,4.384,32.385-1.13,3.248-3.587,4.829-8.119,5.223-1.661.145-6.727.729-11.256,1.3-8.867,1.116-13.107,1.283-15.312.6ZM6.012,14.13a7.005,7.005,0,0,1-.987-1.946c-.636-1.867-.218-4.865,1.02-7.318C7.595,1.8,9.231.894,14.328.3a23.052,23.052,0,0,1,8.178.12c5.062,1.065,8.433,4.74,8.439,9.2,0,2.121-.236,2.991-1.107,4.029-.526.627-.782.645-11.923.849-10.985.2-11.4.188-11.9-.366Z"/>
+									</svg>
+								</a>
+								<a href="{% url 'catalog_page' slug='mates' %}" data-title="Коврики">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110.519 87.508">
+										<path
+												d="M59.321,87.154a22.434,22.434,0,0,1-8.379-3.328,26.289,26.289,0,0,1-6.672-6.8l-1-1.691-17.841-.066L7.584,75.2,6,74.452A10.739,10.739,0,0,1,.974,69.523,7.338,7.338,0,0,1,.02,65.875C-.158,62.45.908,30.606,1.257,28.9c.854-4.181,2.385-5.832,8.769-9.451,5.537-3.139,7.56-4.45,9.245-5.99a7.911,7.911,0,0,0,2.721-5.126,10.33,10.33,0,0,1,1.252-4.64A9.73,9.73,0,0,1,26.872.511C27.966,0,27.967,0,45.771,0h17.8L64.9.652a8.59,8.59,0,0,1,3.919,3.917c.535,1.139.615,1.648.689,4.379l.084,3.091,6.478.072c6.038.067,6.552.106,7.561.573a9.784,9.784,0,0,1,3.639,3.188,10.33,10.33,0,0,1,1.252,4.64,7.911,7.911,0,0,0,2.721,5.126c1.685,1.54,3.708,2.851,9.245,5.99,6.38,3.618,7.911,5.258,8.753,9.376.362,1.77,1.442,33.817,1.252,37.145a10.224,10.224,0,0,1-7.528,9.026c-1.713.456-41.123.438-43.647-.02Zm42.827-7.1c1.657-1.031,1.623-.516,1.133-16.94-.629-21.1-.593-20.408-1.116-21.578a4.793,4.793,0,0,0-.9-1.384c-.244-.205-2.447-1.511-4.9-2.9-5.629-3.2-8.219-4.965-10.309-7.033A13.923,13.923,0,0,1,81.6,21.252c-.242-2.47-.03-2.393-6.6-2.393H69.549V32.681H76.1c8.345,0,8.9.11,12.236,2.427.814.566,3.325,2.057,5.58,3.313,4.583,2.555,5.178,3.016,6.022,4.67.824,1.616.949,3.362,1.36,19.091l.352,13.453-.5,1.036c-1,2.06.354,1.925-19.365,1.926-19.231,0-19.43-.012-22.656-1.479a20.165,20.165,0,0,1-3.138-1.875l-1.5-1.129-1.661.446-1.661.446,1.284,1.233a15.726,15.726,0,0,0,8.972,4.213c.925.109,10.274.185,20.776.168l19.093-.031Zm-3.076-4.28c.186-.347.154-4.2-.115-14.115-.428-15.756-.457-16.2-1.137-17.546-.575-1.139-.855-1.334-6.367-4.443-2.062-1.163-4.284-2.516-4.938-3.007-2.086-1.567-2.554-1.643-10.165-1.643H69.582L69.5,46.093,69.41,57.163l-.635,2.059A22.238,22.238,0,0,1,58,72.522l-1.121.613.887.612a18.008,18.008,0,0,0,4.869,2.183c.865.211,5.75.291,18.675.306,17.387.02,17.505.017,17.759-.458ZM51.151,67.964a15.663,15.663,0,0,0,9.951-8c1.479-3,1.42-1.817,1.42-28.511V7.134l-.6-.228c-.369-.14-6.642-.228-16.23-.228-13.341,0-15.7.05-16.118.343-.387.271-.525.7-.656,2.05a13.924,13.924,0,0,1-4.462,8.969c-2.09,2.068-4.68,3.835-10.309,7.033-2.448,1.391-4.651,2.7-4.9,2.9a4.931,4.931,0,0,0-.91,1.415c-.434.971-.5,2.234-1,18.513-.292,9.609-.48,17.742-.417,18.073a3.461,3.461,0,0,0,.622,1.233c1.075,1.34.592,1.313,22.294,1.24,18.3-.062,20.027-.1,21.31-.484Zm-40.6-2.023a3.537,3.537,0,0,1-1.23-1.5c-.444-1-.446-1.286-.1-14.46.411-15.752.533-17.452,1.369-19.1.8-1.581,1.321-1.98,6.057-4.651,2.23-1.257,4.72-2.747,5.535-3.309a11.079,11.079,0,0,1,4.446-2.159c.844-.179,6.005-.263,16.118-.263,16.3,0,15.575-.061,16.81,1.408a5.128,5.128,0,0,1,.858,1.651c.169.627.227,5.754.179,15.744-.07,14.575-.08,14.839-.589,16.338a16.077,16.077,0,0,1-9.023,9.53c-2.991,1.215-3.547,1.246-22.276,1.245-17.027,0-17.39-.01-18.151-.475Zm38.819-2.616c4.382-1.6,7.845-5.343,8.684-9.385.174-.84.236-5.874.193-15.675-.061-13.886-.081-14.457-.516-14.937l-.452-.5-15.361.065-15.361.065-1.049.559a15.032,15.032,0,0,0-1.874,1.213c-.454.359-2.931,1.851-5.506,3.314-5.12,2.91-5.548,3.3-5.944,5.412-.37,1.97-1.043,29.574-.736,30.149.257.48.306.481,18.226.416l17.968-.065Z"/>
+									</svg>
+								</a>
+							</div>
+						</div>
+
+					</form>
+
+					<div class="additional-products">
+						<strong class="additional-title">Вам может пригодиться</strong>
+						<div class="owl-carousel carousel">
+							{% if products %}
+								{% for product in products %}
+									{% if product.image %}
+										<div class="additional-product">
+											<form action="{% url 'add_to_cart' %}" data-weight="{{ product.weight }}"
+											      data-action_to_remove="{% url 'remove_from_cart' %}" class="product-form"
+											      method="post">{% csrf_token %}
+												<input type="hidden" name="product_id" value="{{ product.pk }}">
+												<input type="hidden" name="url" value="{% url 'product_detail' slug=product.slug %}">
+												<input type="hidden" name="product-count" value="1">
+												<input type="hidden" name="title" value="{{ product.title }}">
+												{% if product.children_colors %}
+													{% for color in product.children_colors.all %}
+														{% if forloop.first %}
+															<input type="checkbox" class="product-color" style="display: none" value="{{ color }}"
+															       checked>
+														{% endif %}
+													{% endfor %}
+												{% endif %}
+												{% if product.sizes %}
+													<select name="size" class="accessory-size" style="display: none">
+														{% for size in product.sizes %}
+															<option value="{{ size.title }}" data-stock="{{ size.stock }}"
+															        data-price="{{ size.price }}">{{ size.title }}</option>{% endfor %}
+													</select>
+												{% endif %}
+												<div class="total" style="display:none"><span data-price="{{ product.d_price }}"></span></div>
+												<a class="preview" href="{% url 'product_detail' product.slug %}">
+													<div class="video-responsive block-media">
+														<div class="image image-bg"
+														     style="background-image:url({{ product.image.hd_sm.url }});"></div>
+														<img src="{{ product.image.hd_sm.url }}" alt="{{ product.title }}"
+														     title="{{ product.title }}" class="screen-reader-text">
+													</div>
+												</a>
+												<div class="content">
+													<h2 class="product-title">
+														<a href="{% url 'product_detail' product.slug %}">{{ product.title }}</a>
+													</h2>
+													<div class="additional-product-price">Цена: {{ product.price }}руб.</div>
+													<button type="submit" class="btn btn-accent additional-add-to-cart">В корзину <i
+															class="fas fa-cart-plus"></i></button>
+												</div>
+											</form>
+										</div>
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+
+					<div class="tabs product-tabs">
+
+						<ul class="tabs-nav">
+							<li class="active">Описание</li>
+							<li>Отзывы ({{ instance.reviews.count }})</li>
+							{#                        <li>Наличие в магазинах</li>#}
+							<li>Обзоры</li>
+							<li>Вопрос-Ответ</li>
+							<li>Установить</li>
+							<li>Аксессуары</li>
+						</ul>
+
+						<div class="tabs-content">
+
+							<div class="tab active">{{ instance.description | safe }}</div>
+							<div class="tab">
+								{% include 'comment/reviews.html' %}
+							</div>
+							{#                        <div class="tab">{{ instance.stock.content|safe }}</div>#}
+							<div class="tab tab-reviews">
+								{% if reviews %}
+									{% for review in reviews %}
+										<div class="review">
+											{% if review.video %}
+												<div class="grid">
+													<div class="video-container">
+														<div class="video">{{ review.video }}</div>
+													</div>
+													<div class="content">
+														<a href="{% url 'review_detail' slug=review.slug %}" title="Смотреть полностью"
+														   target="_blank">
+															<h3 class="review-title" title="{{ review.title }}">{{ review.title }}</h3>
+															<p>{{ review.get_content|striptags|safe }}</p>
+														</a>
+													</div>
+												</div>
+											{% elif review.image %}
+												<div class="grid">
+													<div class="video-container">
+														<a href="{% url 'review_detail' slug=review.slug %}" title="Смотреть полностью"
+														   target="_blank">
+															<div class="video-responsive">
+																<div class="video-preview"
+																     style="background-image: url({{ review.image.hd_sm.url }});"></div>
+															</div>
+														</a>
+													</div>
+													<div class="content">
+														<a href="{% url 'review_detail' slug=review.slug %}" title="Смотреть полностью"
+														   target="_blank">
+															<h3 class="review-title" title="{{ review.title }}">{{ review.title }}</h3>
+															<p>{{ review.get_content|striptags|safe }}</p>
+														</a>
+													</div>
+												</div>
+											{% else %}
+												<div class="content">
+													<a href="{% url 'review_detail' slug=review.slug %}" title="Смотреть полностью"
+													   target="_blank">
+														<h3 class="review-title" title="{{ review.title }}">{{ review.title }}</h3>
+														<p>{{ review.get_content|striptags|safe }}</p>
+													</a>
+												</div>
+											{% endif %}
+										</div>
+									{% endfor %}
+								{% endif %}
+							</div>
+							<div class="tab">
+								{% if qna %}
+									<ul class="accordion">
+										{% for q in qna %}
+											<li class="accordion-item">
+												<div class="tab">
+													<div class="title">{{ forloop.counter }}. {{ q.title|safe }}</div>
+													<i class="fas fa-chevron-down"></i>
+												</div>
+												<div class="accordion-content">
+													{{ q.content|safe }}
+												</div>
+											</li>
+										{% endfor %}
+									</ul>
+								{% endif %}
+							</div>
+							<div class="tab">{{ instance.install.content|safe }}</div>
+							<div class="tab">
+								<div class="additional-products">
+									<div class="owl-carousel carousel">
+										{% if accessories %}
+											{% for product in accessories %}
+												{% if product.image %}
+													<div class="additional-product">
+														<form action="{% url 'add_to_cart' %}" data-action_to_remove="{% url 'remove_from_cart' %}"
+														      class="product-form" method="post">{% csrf_token %}
+															<input type="hidden" name="product_id" value="{{ product.pk }}">
+															<input type="hidden" name="url" value="{% url 'product_detail' slug=product.slug %}">
+															<input type="hidden" name="product-count" value="1">
+															<input type="hidden" name="title" value="{{ product.title }}">
+															{% if product.children_colors %}
+																{% for color in product.children_colors.all %}
+																	{% if forloop.first %}
+																		<input type="checkbox" class="product-color" style="display: none"
+																		       value="{{ color }}" checked>
+																	{% endif %}
+																{% endfor %}
+															{% endif %}
+															{% if product.sizes %}
+																<select name="size" class="accessory-size" style="display: none">
+																	{% for size in product.sizes %}
+																		<option value="{{ size.title }}" data-stock="{{ size.stock }}"
+																		        data-price="{{ size.price }}">{{ size.title }}</option>{% endfor %}
+																</select>
+															{% endif %}
+															<div class="total" style="display:none"><span data-price="{{ product.d_price }}"></span>
+															</div>
+															<a class="preview" href="{% url 'product_detail' product.slug %}">
+																<div class="video-responsive block-media">
+																	<div class="image image-bg"
+																	     style="background-image:url({{ product.image.hd_sm.url }});"></div>
+																	<img src="{{ product.image.hd_sm.url }}" alt="{{ product.title }}"
+																	     title="{{ product.title }}" class="screen-reader-text">
+																</div>
+															</a>
+															<div class="content">
+																<h2 class="product-title">
+																	<a href="{% url 'product_detail' product.slug %}">{{ product.title }}</a>
+																</h2>
+																<div class="additional-product-price">Цена: {{ product.price }}руб.</div>
+																<button type="submit" class="btn btn-accent additional-add-to-cart">В корзину <i
+																		class="fas fa-cart-plus"></i></button>
+															</div>
+														</form>
+													</div>
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+			</section>
+		</main>
+
+	</div>
+
+{% endblock %}
+{% block controls %}
+	<a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать товар</a>
+{% endblock %}

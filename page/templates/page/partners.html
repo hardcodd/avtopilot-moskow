@@ -1,0 +1,33 @@
+<ul class="accordion">
+    {% for partner in items %}
+        <li class="accordion-item">
+            <div class="tab"><div class="title">{{ forloop.counter }}. {{ partner.tab_title }}</div><i class="fas fa-chevron-down"></i></div>
+            <div class="accordion-content">
+                <h3 class="title">{{ partner.title }}</h3>
+                <div class="grid">
+                    {% if partner.description %}
+                        <div class="description">
+                            {{ partner.description|safe }}
+                        </div>
+                    {% endif %}
+                    {% if partner.info %}
+                        <div class="info">
+                            {{ partner.info|safe }}
+                        </div>
+                    {% endif %}
+                    <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+                        <input type="hidden" name="FORM" value="Наши партнёры ({{ partner.title }}) - страница Контакты">
+                        <h3>Оставьте телефон и мы перезвоним вам</h3>
+                        {{ partner_form }}
+                        <input type="submit" class="btn btn-accent" value="Отправить">
+                    </form>
+                    {% if partner.map %}
+                        <div class="map">
+                            {{ partner.map|safe }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

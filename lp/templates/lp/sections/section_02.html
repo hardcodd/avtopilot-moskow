@@ -1,0 +1,38 @@
+<!-- Section 02-->
+<section class="section section_02" id="{{ id }}" style="color:{{ color }};background:{{ background }}">
+	<div class="section_02__content">
+		<div class="container">
+			<h2 class="section_02__title">{{ title|safe }}</h2>
+			<div class="section_02__text">
+				{{ text|safe }}
+			</div>
+		</div>
+		<div class="container-fluid">
+			{% for row in rows %}
+				<div class="row">
+					<div class="section_02__col col">
+						<div class="section_02__plate plate">
+							<p class="plate__text">{{ row.card.text }}</p>
+							<a class="plate__btn btn" href="{{ row.card.button.link }}" rel="{{ row.card.button.rel }}" target="{{ row.card.button.target }}">{{ row.card.button.text }}</a>
+						</div>
+					</div>
+					<div class="section_02__col col">
+						<div class="section_02__options options">
+							<div class="options__title">{{ row.title|safe }}</div>
+							<div class="row">
+								{% for item in row.items %}
+									<div class="options__col col">
+										<div class="col__counter">{{ forloop.counter }}</div>
+										<div class="options__option option"><strong class="option__title">{{ item.title|safe }}</strong>
+											<p class="option__text">{{ item.text|safe }}</p>
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</section>

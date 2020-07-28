@@ -1,0 +1,66 @@
+{% extends 'base.html' %}{% load sitetree avtopilot_filters %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}page page-reviews{% endblock %}
+
+{% block content %}
+
+	<div class="container">
+
+		{% sitetree_breadcrumbs from "breadcrumbs_pages" template "breadcrumbs.html" %}
+
+		<main class="main-content">
+			<section class="content">
+				<div class="sticky">
+
+					<h1 class="page-title">{{ instance.title }}</h1>
+
+					{% if sections %}
+						{% for section in sections %}
+							{% if section.get_reviews.count %}
+								<section class="section">
+									<h3 class="section-title title-line">{{ section.title }}</h3>
+									<div class="carousel owl-carousel owl-theme reviews-carousel">
+										{% for review in section.get_reviews %}
+											<div class="item{% if review.image or review.video and review.content %} media{% endif %}">
+												{% if review.video %}
+													<div class="video-responsive">
+														<div class="video-div" data-src="{{ review.video }}"></div>
+													</div>
+												{% elif review.image %}
+													<div class="video-responsive">
+														<div class="image image-bg" style="background-image: url({{ review.image.hd_lg.url }})">
+															<img src="{{ review.image.hd_lg.url }}" alt="{{ review.name }}" title="{{ review.name }}"
+															     class="screen-reader-text">
+														</div>
+													</div>
+												{% endif %}
+												<div class="text">
+													{% if review.content %}
+														<h3 class="title">{{ review.name }}</h3>
+														<div class="content">{{ review.content|safe }}</div>
+													{% endif %}
+												</div>
+											</div>
+										{% endfor %}
+									</div>
+								</section>
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+
+					<div style="text-align:center"><a href="/reviews/add/" style="padding:10px 30px;" class="btn btn-orange btn">Добавить
+						отзыв</a></div>
+
+				</div>
+			</section>
+		</main>
+
+	</div>
+
+{% endblock %}
+{% block controls %}
+	<a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

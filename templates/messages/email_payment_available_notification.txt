@@ -1,0 +1,2 @@
+Для Вашего заказа #{{ order.id }} разрешена оплата.
+Для оплаты, пожалуйста, перейдите по ссылке <a href="https://avtopilot1.ru{% url 'yandex_payment' order.pk order.uuid %}" target="_blank">Оплатить</a>

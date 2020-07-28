@@ -1,0 +1,158 @@
+{% extends 'base.html' %}{% load sitetree avtopilot_filters thumbnail %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}page page-about{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_pages" template "breadcrumbs.html" %}
+
+        <main class="main-content">
+            <section class="content">
+                <div class="sticky">
+
+                    <h1 class="page-title">{{ instance.title }}</h1>
+
+                    {{ instance.content|sc:request }}
+
+                    {% if instance.offers %}
+                        <section class="offers">
+                            <h3 class="title-line">Мы предлагаем</h3>
+                            <div class="grid">
+                                {% for offer in instance.get_offers %}
+                                    <div class="offer">
+                                        <div class="video-responsive">
+                                            <div class="preview image-bg" style="background-image:url({{ offer.image.hd_sm.url }});">
+                                                <img src="{{ offer.image.hd_sm.url }}" class="screen-reader-text" alt="{{ offer.title }}" title="{{ offer.title }}">
+                                            </div>
+                                        </div>
+                                        <div class="text text-center">
+                                            <h4>{{ offer.title }}</h4>
+                                            <p>{{ offer.content }}</p>
+                                            <a class="btn btn-orange" href="{{ offer.url }}">Каталог</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if instance.become_partner %}
+                        <section class="become-partner">
+                            <h3 class="title-line">Стать нашим партнёром</h3>
+                            <div class="grid">
+                                <div>
+                                    <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+                                        <input type="hidden" name="FORM" value="Стать партнёром - страница О компании">
+                                        <h3 class="text-center">Заполните форму, чтобы стать партнёром</h3>
+                                        {{ partner_form.as_p }}
+                                        <p class="text-center"><input type="submit" class="btn btn-accent" value="Отправить"></p>
+                                    </form>
+                                </div>
+                                <div>{{ instance.become_partner|sc:request }}</div>
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if instance.cases %}
+                        <section class="cases">
+                            <h3 class="title-line">У нас всегда есть чехлы для</h3>
+                            <div class="grid">
+                                {% for case in instance.get_cases %}
+                                    {% if case.image %}
+                                        <a class="case" href="{% url 'make' slug=case.slug %}" title="{{ case.title }}">
+                                            <div class="video-responsive">
+                                                <div class="preview image-bg" style="background-image:url({{ case.image.hd_xs.url }});">
+                                                    <img src="{{ case.image.hd_xs.url }}" class="screen-reader-text" alt="{{ case.title }}" title="{{ case.title }}">
+                                                </div>
+                                            </div>
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if instance.slider %}
+                        <section class="slider">
+                            <h3 class="title-line">{{ instance.slider.title }}</h3>
+                            <div class="carousel owl-carousel owl-theme page-about-carousel">
+                                {% for slide in instance.slider.get_slides %}
+                                    {% if slide.video %}
+                                        <div class="item">
+                                            <div class="video-responsive">
+                                                <div class="video-div" data-src="{{ slide.video_url }}"></div>
+                                            </div>
+                                        </div>
+                                    {% elif slide.image %}
+                                        <div class="item">
+                                            <div class="video-responsive">
+                                                {% if slide.url %}
+                                                    <a href="{{ slide.url }}"{% if slide.blank %} target="_blank"{% endif %} class="image-bg" style="background-image: url('{{ slide.image.url }}')"></a>
+                                                {% else %}
+                                                    <div class="image-bg" style="background-image: url('{{ slide.image.url }}')"></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    <div class="button-div" style="margin-top: 30px">
+                        <a href="#" data-form="#consultation" class="btn btn-orange">Получить консультацию</a>
+                    </div>
+
+                    {% if staff %}
+                        <section class="staff">
+                            <h3 class="section-title">Наша команда</h3>
+                            <div class="carousel owl-carousel owl-theme staff-about-carousel">
+                                {% for member in staff %}
+                                    <div class="item">
+                                        <a href="{% url 'staff' slug=member.slug %}">
+                                            <div class="image-bg image" style="background-image: url({% thumbnail member.image 480x573 crop upscale %});">
+                                                <img src="{% thumbnail member.image 480x573 crop upscale %}" alt="{{ member.title }}" title="{{ member.title }}" class="screen-reader-text">
+                                            </div>
+                                            <h3>{{ member.title }}</h3>
+                                            <p>{{ member.get_position }}</p>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {{ instance.content_bottom|sc:request }}
+
+                    <div class="button-div bottom">
+                        <a href="{% url 'catalog_page' slug='cases' %}" class="btn btn-orange">Перейти к покупкам</a>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block popup_forms %}
+<div id="consultation" class="popup-form">
+    <h3>Получить бесплатную консультацию</h3>
+    <p>Мы перезвоним Вам в самое ближайшее время!</p>
+    <form method="post" action="{% url 'forms_handler' %}" data-form-bx24>{% csrf_token %}
+        <input type="hidden" name="FORM" value="Получить бесплатную консультацию - страница О компании">
+        {{ consultation_form.as_p }}
+        <p class="text-center">
+            <input type="submit" value="Отправить" class="btn btn-orange">
+        </p>
+    </form>
+</div>
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать страницу</a>
+{% endblock %}

@@ -1,0 +1,24 @@
+<!-- Section 04-->
+<section class="section section_04" id="{{ id }}" style="color:{{ color }};background:{{ background }}">
+	<div class="container">
+		<div class="section_04__content">
+			<h2 class="section_04__title">{{ title }}</h2>
+			<form class="header_01__form form" action="{{ form.action }}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+				<h3 class="form__title">{{ form.title }}</h3>
+				{% for field in form.fields %}
+					{% if field.type == 'text' %}
+						<input class="form__input" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+					{% elif field.type == 'email' %}
+						<input class="form__input" type="email" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+					{% elif field.type == 'tel' %}
+						<input class="form__input" type="tel" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+					{% elif field.type == 'textarea' %}
+						<textarea class="form__input form__input--text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" cols="30" rows="10" {% if field.required %}required{% endif %}></textarea>
+					{% elif field.type == 'submit' %}
+						<input class="form__btn btn" type="submit" value="{{ field.text }}">
+					{% endif %}
+				{% endfor %}
+			</form>
+		</div>
+	</div>
+</section>

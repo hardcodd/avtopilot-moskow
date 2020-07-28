@@ -1,0 +1,46 @@
+{% load static thumbnail %}
+
+<div class="review-form-wrapper">
+    <h3 class="reviews-title">Оставить комментарий</h3>
+    {% if request.user.is_authenticated %}
+        <form action="." method="post" class="review-form">{% csrf_token %}
+            <div class="rating-control">
+                {% for choice in review_form.rating %}
+                    {{ choice.tag }}
+                    <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                {% endfor %}
+            </div>
+            <p class="comment-p">{{ review_form.content.label_tag }}{{ review_form.content }}</p>
+            <p>{{ review_form.content_type }}</p>
+            <p>{{ review_form.obj_id }}</p>
+            <p class="submit-p"><input type="submit" value="Оставить комментарий" class="btn btn-orange"></p>
+        </form>
+    {% else %}
+        <h3 class="login-need-title">Для того, чтобы оставить комментарий, вам необходимо <a href="{% url 'login' %}" target="_blank">авторизоваться</a> или <a href="{% url 'registration' %}" target="_blank">зарегистрироваться</a>.</h3>
+    {% endif %}
+</div>
+
+<div class="reviews">
+    {% for review in instance.reviews %}
+        <div class="lead">
+            <div class="info">
+                <figure class="avatar">
+                    {% if review.user.avatar %}
+                        <div class="img" style="background-image: url({% thumbnail review.user.avatar 52x52 crop upscale %})" title="{{ review.user }}"></div>
+                        <img class="screen-reader-text" src="{% thumbnail review.user.avatar 52x52 crop upscale %}" alt="{{ review.user }}" title="{{ review.user }}">
+                    {% else %}
+                        <div class="img" style="background-image: url({% static 'img/avatar.png' %})" title="{{ review.user }}"></div>
+                        <img class="screen-reader-text" src="{% static 'img/avatar.png' %}" alt="{{ review.user }}" title="{{ review.user }}">
+                    {% endif %}
+                    <figcaption class="user">{{ review.user.full_name }}</figcaption>
+                </figure>
+                <span class="timestamp">{{ review.timestamp | date }}</span>
+                <span class="rating">{% for star in review.stars %}<i class="fas fa-star"></i>{% endfor %}</span>
+            </div>
+            <div class="content">
+                <strong>Комментарий:</strong>
+                <p>{{ review.content }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>

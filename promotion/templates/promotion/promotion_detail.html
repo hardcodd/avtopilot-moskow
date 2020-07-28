@@ -1,0 +1,118 @@
+{% extends 'base.html' %}{% load sitetree %}{% load avtopilot_filters %}
+{% block title %}{{ instance.seo_title|default:instance.title }}{% endblock %}
+{% block meta_description %}{{ instance.meta_description|default:'' }}{% endblock %}
+{% block meta_keywords %}{{ instance.meta_keywords|default:'' }}{% endblock %}
+{% block meta_image %}{% if instance.meta_image %}{{ instance.meta_image.url }}{% endif %}{% endblock %}
+{% block body_class %}promotion{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% sitetree_breadcrumbs from "breadcrumbs_promotion" template "breadcrumbs.html" %}
+
+        <main class="main-content content-sidebar-reverse">
+
+            <h1 class="page-title">{{ instance.title }}</h1>
+
+            {% if instance.slider %}
+                <section class="slider">
+                    {% include 'promotion/share.html' %}
+                    <div class="carousel owl-carousel owl-theme promotion-carousel">
+                        {% for slide in instance.slider %}
+                            {% if slide.video and slide.image %}
+                                <div class="item video">
+                                    <img src="{{ slide.image.url }}" alt="{{ slide.title }}" title="{{ slide.title }}">
+                                    <div class="video">
+                                        <div class="video-responsive">
+                                            <div class="video-div" data-src="{{ slide.video_url }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elif slide.video %}
+                                <div class="item video">
+                                    <div class="image image-bg" style="background-image:url({{ slide.video_image }});"></div>
+                                    <div class="video">
+                                        <div class="video-responsive">
+                                            <div class="video-div" data-src="{{ slide.video_url }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elif slide.image %}
+                                <div class="item">
+                                    <img src="{{ slide.image.url }}" alt="{{ slide.title }}" title="{{ slide.title }}">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="slider-nav">
+                        {% for slide in instance.slider %}
+                            <div class="thumb">
+                                <button class="video-responsive image-bg" style="background-image: url({% if slide.image %}{{ slide.image.url }}{% elif slide.video_image %}{{ slide.video_image }}{% endif %});"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            <aside class="sidebar">
+                <div class="sticky">
+                    {% for category in categories %}
+                        {% if category.items %}
+                            <section class="widget widget-promotions">
+                                <h3 class="widget-title">{% if category.widget_title %}{{ category.widget_title }}{% else %}{{ category.title }}{% endif %}</h3>
+                                {% for item in category.items %}
+                                    {% if item.image %}
+                                        <a class="item" href="{% url 'promotion_detail' item.slug %}">
+                                            <div class="video-responsive">
+                                                <div class="image image-bg" style="background-image: url({{ item.image.url }});">
+                                                    {% if item.get_discount %}<span class="badge">{{ item.get_discount }}</span>{% endif %}
+                                                </div>
+                                            </div>
+                                            <h4>{{ item.title }}</h4>
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="text-center">
+                                    <a href="{% url 'promotion_category' category.slug %}" class="btn btn-dark">Все акции</a>
+                                </div>
+                            </section>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <section class="content">
+                <div class="sticky">
+
+                    <div class="order">
+                        <div class="promotion-price">
+                            <div class="the-price">{{ instance.get_price }}</div>
+                            <a href="#" class="btn btn-orange">Оформить</a>
+                        </div>
+                    </div>
+
+                    {% if instance.accordion %}
+                        <ul class="accordion">
+                            {% for item in instance.accordion %}
+                                <li class="accordion-item">
+                                    <div class="tab"><div class="title">{{ forloop.counter }}. {{ item.title }}</div><i class="fas fa-chevron-down"></i></div>
+                                    <div class="accordion-content">{{ item.content|sc:request }}</div>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    {% endif %}
+
+                    {% include 'comment/reviews.html' %}
+
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+{% endblock %}
+{% block controls %}
+    <a href="{{ instance.get_edit_url }}" target="_blank"><i class="fas fa-edit"></i> Редактировать акцию</a>
+{% endblock %}

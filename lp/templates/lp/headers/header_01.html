@@ -1,0 +1,65 @@
+<!-- Header -<start>- -->
+<header class="header_01" id="{{ id }}" style="background:{{ background }};color:{{ color }}">
+	<div class="foreground" style="background:{{ foreground }}"></div>
+	<div class="header_01__navigation">
+		<div class="container">
+			<div class="row">
+				<div class="nav_col col">
+					<a class="logo" href="{{ logo.url }}">
+						<img src="{{ logo.image }}" alt="{{ title|striptags|escape }}">
+					</a>
+				</div>
+				<div class="nav_col col">
+					<nav class="navigation" role="navigation">
+						<ul class="navigation__list" itemscope itemtype="https://schema.org/SiteNavigationElement">
+							{% for item in navigation %}
+								<li class="navigation__item" itemprop="name">
+									<a class="navigation__link {{ item.class }}" href="{{ item.link }}" rel="{{ item.rel }}" target="{{ item.target }}" itemprop="url" title="{{ item.text|striptags|escape }}">{{ item.text|safe }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</nav>
+					<div class="mobile-navigation"></div>
+					<div class="nav_bars nav-toggle"><span></span><span></span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="header_01__bg i-bg"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ background_image }}" alt="{{ title|striptags|escape }}"></div>
+	<div class="container">
+		<div class="row">
+			<div class="header_01__col col">
+				<h1 class="header_01__title">{{ title|safe }}</h1>
+				<p class="header_01__description">{{ subtitle }}</p>
+				<div class="embed-responsive">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+				</div>
+			</div>
+			<div class="header_01__col col">
+				<form class="header_01__form form" action="{{ form.action }}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+					<h3 class="form__title">{{ form.title }}</h3>
+					{% for field in form.fields %}
+						{% if field.type == 'text' %}
+							<input class="form__input" type="text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+						{% elif field.type == 'email' %}
+							<input class="form__input" type="email" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+						{% elif field.type == 'tel' %}
+							<input class="form__input" type="tel" name="{{ field.name }}" placeholder="{{ field.placeholder }}" {% if field.required %}required{% endif %}>
+						{% elif field.type == 'textarea' %}
+							<textarea class="form__input form__input--text" name="{{ field.name }}" placeholder="{{ field.placeholder }}" cols="30" rows="10" {% if field.required %}required{% endif %}></textarea>
+						{% elif field.type == 'submit' %}
+							<input class="form__btn btn" type="submit" value="{{ field.text }}">
+						{% endif %}
+					{% endfor %}
+					<input type="hidden" name="from" value="{{ request.build_absolute_uri }}">
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="header_01__scroll_down scroll-down">
+
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M143 256.3L7 120.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0L313 86.3c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.4 9.5-24.6 9.5-34 .1zm34 192l136-136c9.4-9.4 9.4-24.6 0-33.9l-22.6-22.6c-9.4-9.4-24.6-9.4-33.9 0L160 352.1l-96.4-96.4c-9.4-9.4-24.6-9.4-33.9 0L7 278.3c-9.4 9.4-9.4 24.6 0 33.9l136 136c9.4 9.5 24.6 9.5 34 .1z"/></svg>
+
+	</div>
+</header>
+<!-- Header -</end>- -->

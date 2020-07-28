@@ -1,0 +1,27 @@
+{% if promotions.has_other_pages %}
+    <div class="pagination">
+
+        {% if promotions.has_previous %}
+            <a href="?page=1" class="first">В начало</a>
+            <a href="?page={{ promotions.previous_page_number }}" class="prev"><i class="fas fa-angle-left"></i></a>
+        {% endif %}
+
+        {% for num in promotions.paginator.page_range %}
+
+            {% if promotions.number == num %}
+                <a href="?page={{ num }}" class="page-link current">{{ num }}</a>
+            {% elif num > promotions.number|add:'-4' and num < promotions.number|add:'4' %}
+                <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+            {% elif num == 1 or num == promotions.paginator.num_pages %}
+                <span>...</span>
+            {% endif %}
+
+        {% endfor %}
+
+        {% if promotions.has_next %}
+            <a href="?page={{ promotions.next_page_number }}" class="next"><i class="fas fa-angle-right"></i></a>
+            <a href="?page={{ promotions.paginator.num_pages }}" class="last">В конец</a>
+        {% endif %}
+
+    </div>
+{% endif %}

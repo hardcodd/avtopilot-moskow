@@ -1,0 +1,28 @@
+<!-- Section 01-->
+<section class="section section_01" id="{{ id }}" style="color:{{ color }};background:{{ background }}">
+	<div class="section_01__content">
+		<div class="container">
+			<h2 class="section_01__title">{{ title|safe }}</h2>
+			<div class="row">
+				{% for item in items %}
+					<div class="section_01__col col">
+						<div class="section_01__item item">
+							<div class="item__icon" style="color:{{ item.icon_color }}">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="{{ item.icon }}"/></svg>
+							</div>
+							<p class="item__text">{{ item.text|safe }}</p>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+			<div class="section_01__text">
+				{% if video_id %}
+					<div class="embed-responsive">
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+					</div>
+				{% endif %}
+				{{ text|safe }}
+			</div>
+		</div>
+	</div>
+</section>

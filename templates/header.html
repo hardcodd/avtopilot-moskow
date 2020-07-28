@@ -1,0 +1,90 @@
+<header class="main-header">
+
+    <div class="top-line">
+        <div class="container">
+
+            {% include 'brand.html' %}
+
+            <div class="header-content">
+
+                <div class="btns">
+                    <a href="#" data-form="#call-back"><i class="fas fa-phone-square"></i> Перезвоним</a>
+                    <a href="#" data-form="#text-us"><i class="fas fa-envelope"></i> Напишите</a>
+                </div>
+
+                <div class="phones">
+                    <div class="phone">
+                        <a href="tel:{{ opts.phone|striptags|phone2numeric }}"><span>{{ opts.work_time_header }}</span><p>{{ opts.phone|striptags }}</p></a>
+                    </div>
+                    {% if opts.phone_free %}
+                        <div class="phone free">
+                            <a href="tel:{{ opts.phone_free|striptags|phone2numeric }}"><span>Звонок по РФ бесплатный</span><p>{{ opts.phone_free|striptags }}</p></a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="search-form">
+                    <form action="{% url 'search' %}" method="post">{% csrf_token %}
+                        <label for="search" class="screen-reader-text">Поиск</label>
+                        <input type="search" id="search"{% if search_string %} value="{{ search_string }}"{% endif %} name="q" placeholder="Что вы ищете?" required>
+                        <button><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+
+                <div class="user-panel">
+                    <ul class="account-links">
+                        {% if not request.user.is_authenticated %}
+                            <li><a href="#" onclick="return false" class="account-link"><i class="fas fa-sign-in-alt"></i></a>
+                                <ul>
+                                    <li><a href="{% url 'login' %}"><i class="fas fa-user"></i> Вход</a></li>
+                                    <li><a href="{% url 'registration' %}"><i class="fas fa-sign-in-alt"></i> Регистрация</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li><a href="#" onclick="return false" class="account-link"><i class="fas fa-user"></i></a>
+                                <ul>
+                                    <li><a href="{% url 'account' %}"><i class="fas fa-user-tie"></i> Личный кабинет</a></li>
+                                    {% if user.is_superuser or user.is_staff %}
+                                        <li><a href="/aristarx/" target="_blank"><i class="fas fa-user-cog"></i> Админ панель</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i> Моя корзина</a></li>
+                                    <li><a href="{% url 'my_orders' %}"><i class="fas fa-list-alt"></i> Мои заказы</a></li>
+                                    <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Выйти</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <div id="mini-cart"></div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <nav class="main-navigation">
+        <div class="container">
+            <div class="sidebar-toggle-btn hidden"><i
+                class="fas fa-align-right"
+                data-toggle-selector=".sidebar"
+                data-alt-class="fa-times"
+            ></i></div>
+            <div class="menu-toggle-btn"><i
+                class="fas fa-bars"
+                data-toggle-selector=".main-navigation ul"
+                data-alt-class="fa-times"
+            ></i></div>
+            <div class="search-toggle-btn"><i
+                class="fas fa-search"
+                data-toggle-selector=".search-form"
+                data-alt-class="fa-times"
+            ></i></div>
+            {% if main_menu.items %}
+                {% with main_menu.get_items as items %}
+                    {% include 'navigation/main-menu.html' %}
+                {% endwith %}
+            {% endif %}
+        </div>
+    </nav>
+
+</header>
