@@ -425,3 +425,5 @@ fabric.properties
 /venv/
 /webpack/
 /avtopilot_moskow.sql
+
+.idea
