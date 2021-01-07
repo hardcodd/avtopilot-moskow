@@ -14,4 +14,4 @@ django-environ==0.4.5
 psycopg2==2.8.4
 yturl==2.0.2
 simplejson==3.16.0
-lxml==4.4.0
+lxml==4.6.2
